@@ -1,5 +1,3 @@
-// src/app/loading.tsx
-
 export default function GlobalLoading() {
   return (
     // 레이아웃의 남은 공간을 꽉 채우고 가운데 정렬 (flex-1)
