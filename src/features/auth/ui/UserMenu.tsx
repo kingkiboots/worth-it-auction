@@ -42,7 +42,7 @@ export function UserMenu({ nickname, profileImage }: UserMenuProps) {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-2 py-1 transition-colors rounded-full hover:bg-gray-100"
+        className="flex items-center gap-2 px-2 py-1 transition-colors rounded-full"
       >
         <span className="text-sm font-medium text-gray-700 hidden sm:block">
           <span className="font-bold text-gray-900">{nickname}</span>님
