@@ -2,6 +2,7 @@ export const ROUTES = {
   // 1. 화면(Page) 경로
   HOME: "/",
   LOGIN: "/login",
+  SETUP_PROFILE: "/setup-profile",
   AUCTION: "/auction",
 
   // 2. API 및 콜백 경로

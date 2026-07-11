@@ -13,9 +13,21 @@ export async function GET(request: Request) {
   if (code) {
     const supabase = await createServerSideClient();
     // 카카오가 준 code를 진짜 로그인 세션(쿠키)으로 교환
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { error, data } = await supabase.auth.exchangeCodeForSession(code);
 
-    if (!error) {
+    if (!error && data.user) {
+      // 💡 닉네임 대신 is_setup_completed 상태를 조회합니다.
+      const { data: userProfile } = await supabase
+        .from("users")
+        .select("is_setup_completed")
+        .eq("id", data.user.id)
+        .single();
+
+      // 온보딩(설정)을 완료하지 않은 유저라면 무조건 설정 화면으로!
+      if (!userProfile?.is_setup_completed) {
+        return NextResponse.redirect(`${origin}${ROUTES.SETUP_PROFILE}`);
+      }
+
       return NextResponse.redirect(`${origin}${next}`);
     }
   }
