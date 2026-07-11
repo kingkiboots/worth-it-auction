@@ -92,6 +92,8 @@ export type Database = {
           id: string
           is_setup_completed: boolean
           nickname: string | null
+          profile_image: string | null
+          role: string
         }
         Insert: {
           created_at?: string
@@ -99,6 +101,8 @@ export type Database = {
           id: string
           is_setup_completed?: boolean
           nickname?: string | null
+          profile_image?: string | null
+          role?: string
         }
         Update: {
           created_at?: string
@@ -106,6 +110,8 @@ export type Database = {
           id?: string
           is_setup_completed?: boolean
           nickname?: string | null
+          profile_image?: string | null
+          role?: string
         }
         Relationships: []
       }

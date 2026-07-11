@@ -1,4 +1,5 @@
 import { CurrentDate } from "@/shared/ui/CurrentDate";
+import { Header } from "@/widgets/header/ui/Header";
 
 // 💡 사진에서 추출한 10개의 경매 상황 데이터
 const AUCTION_ITEMS = [
@@ -67,6 +68,7 @@ const AUCTION_ITEMS = [
 export default function AuctionRankingPage() {
   return (
     <>
+      <Header />
       {/* 전체 배경을 밝은 톤으로 깔고 컨텐츠를 가운데 정렬 */}
       <div className="mx-auto min-h-screen">
         {/* 상단 헤더 영역 (이미지의 텍스트와 동전 일러스트) */}
@@ -89,7 +91,7 @@ export default function AuctionRankingPage() {
             <div className="w-16 h-4 bg-orange-300 rounded-full border-b-2 border-orange-400 mb-[-8px] z-10"></div>
             <div className="w-16 h-4 bg-orange-400 rounded-full border-b-2 border-orange-500 mb-[-8px] z-20"></div>
             <div className="w-16 h-4 bg-orange-500 rounded-full border-b-2 border-orange-600 mb-1 z-30"></div>
-            <div className="flex items-center justify-center w-12 h-12 bg-orange-500 rounded-full shadow-lg border-2 border-orange-300 z-40 text-white font-bold text-xl">
+            <div className="flex items-center justify-center w-12 h-12 bg-orange-500 rounded-full shadow-lg border-2 border-orange-300 z-31 text-white font-bold text-xl">
               ₩
             </div>
           </div>
