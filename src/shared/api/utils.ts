@@ -1,4 +1,3 @@
-// src/shared/lib/api-utils.ts
 import { NextResponse } from "next/server";
 import { ApiResponse } from "./api.types";
 

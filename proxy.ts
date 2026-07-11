@@ -1,4 +1,4 @@
-import { updateSession } from "@/shared/db";
+import { updateSession } from "@/shared/db/proxy";
 import { type NextRequest } from "next/server";
 
 export async function proxy(request: NextRequest) {

@@ -1,11 +1,9 @@
-// src/app/api/health/route.ts
-
 import { createErrorResponse, createSuccessResponse } from "@/shared/api/utils";
-import { createServserSideClient } from "@/shared/db";
+import { createServerSideClient } from "@/shared/db/server";
 
 export async function GET() {
   try {
-    const supabase = await createServserSideClient();
+    const supabase = await createServerSideClient();
     const { count, error } = await supabase
       .from("users")
       .select("id", { count: "exact", head: true });

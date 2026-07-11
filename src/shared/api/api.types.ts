@@ -1,5 +1,3 @@
-// src/shared/types/api.ts
-
 export type ApiResponse<T = unknown> =
   | {
       status: "success";

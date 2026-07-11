@@ -7,7 +7,7 @@ import { Database } from "./database.types";
  * global variable. Always create a new client within each function when using
  * it.
  */
-export async function createClient() {
+export async function createServerSideClient() {
   const cookieStore = await cookies();
 
   return createServerClient<Database>(
