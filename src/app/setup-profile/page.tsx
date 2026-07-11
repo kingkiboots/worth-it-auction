@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { ROUTES } from "@/shared/config/routes";
 import { createServerSideClient } from "@/shared/db/server";
-import { updateNicknameAction } from "@/features/auth/api/update-nickname-action";
+import { updateNicknameAction } from "@/features/auth/api/updateNicknameAction";
 import { generateRandomNickname } from "@/features/auth/lib/nickname-generator";
 
 export default async function SetupProfilePage() {

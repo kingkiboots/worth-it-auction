@@ -2,8 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { ROUTES } from "@/shared/config/routes";
+import { useRouter } from "next/navigation";
+import { createClientSideClient } from "@/shared/db/client";
 
 interface UserMenuProps {
   nickname: string;
@@ -13,8 +13,9 @@ interface UserMenuProps {
 export function UserMenu({ nickname, profileImage }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const router = useRouter(); // 💡 라우터 객체 추가
+  const supabase = createClientSideClient(); // 💡 Supabase 클라이언트 초기화
 
-  // 메뉴 바깥을 클릭하면 닫히도록 처리
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -25,9 +26,20 @@ export function UserMenu({ nickname, profileImage }: UserMenuProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // 💡 폼 제출(Server Action) 대신 클라이언트 핸들러 사용
+  const handleLogout = async () => {
+    // 1. 브라우저 단에서 완전히 세션 날리기
+    await supabase.auth.signOut();
+
+    // 2. 메뉴 닫기
+    setIsOpen(false);
+
+    // 3. 현재 화면의 모든 서버 컴포넌트(Header 포함)를 강제로 새로고침하여 캐시 무효화
+    router.refresh();
+  };
+
   return (
     <div className="relative" ref={menuRef}>
-      {/* 프로필 및 닉네임 버튼 */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-2 py-1 transition-colors rounded-full hover:bg-gray-100"
@@ -37,7 +49,6 @@ export function UserMenu({ nickname, profileImage }: UserMenuProps) {
           반가워요!
         </span>
 
-        {/* 카카오 프로필 이미지 (없으면 기본 회색 동그라미) */}
         <div className="w-8 h-8 overflow-hidden bg-gray-200 rounded-full shrink-0 border border-gray-200">
           {profileImage ? (
             <img
@@ -57,7 +68,6 @@ export function UserMenu({ nickname, profileImage }: UserMenuProps) {
         </div>
       </button>
 
-      {/* Context Menu (드롭다운) */}
       {isOpen && (
         <div className="absolute right-0 w-48 py-2 mt-2 bg-white border border-gray-100 shadow-xl rounded-xl z-50">
           <Link
@@ -75,8 +85,12 @@ export function UserMenu({ nickname, profileImage }: UserMenuProps) {
             내가 산 가치 목록
           </Link>
           <div className="h-px my-2 bg-gray-100"></div>
-          {/* TODO: 로그아웃 로직 연결 */}
-          <button className="w-full px-4 py-2 text-sm text-left text-red-600 hover:bg-red-50">
+
+          {/* 💡 button의 onClick 이벤트로 변경 */}
+          <button
+            onClick={handleLogout}
+            className="w-full px-4 py-2 text-sm text-left text-red-600 hover:bg-red-50"
+          >
             로그아웃
           </button>
         </div>
