@@ -107,6 +107,7 @@ export function RealtimeAuctionList({ initialItems }: Props) {
         ))}
       </div>
       <AuctionDetailModal
+        key={selectedItem?.id}
         item={selectedItem}
         isOpen={!!selectedItem}
         onClose={() => setSelectedItem(null)}
