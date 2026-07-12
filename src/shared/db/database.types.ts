@@ -17,21 +17,27 @@ export type Database = {
       auction_items: {
         Row: {
           current_price: number
+          description: string | null
           id: number
+          rank_color: string | null
           title: string
           updated_at: string
           winner_id: string | null
         }
         Insert: {
           current_price?: number
+          description?: string | null
           id?: number
+          rank_color?: string | null
           title: string
           updated_at?: string
           winner_id?: string | null
         }
         Update: {
           current_price?: number
+          description?: string | null
           id?: number
+          rank_color?: string | null
           title?: string
           updated_at?: string
           winner_id?: string | null
