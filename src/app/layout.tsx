@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Suspense } from "react";
+import { AdminFloatingButton } from "@/features/admin/ui/AdminFloatingButton";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,6 +26,9 @@ export default function RootLayout({
         <main className="relative flex flex-col w-full min-h-screen">
           {children}
         </main>
+        <Suspense fallback={null}>
+          <AdminFloatingButton />
+        </Suspense>
       </body>
     </html>
   );
