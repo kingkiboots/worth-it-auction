@@ -73,7 +73,7 @@ export function UserMenu({
     <div className="relative flex items-center" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-2 py-1 transition-colors rounded-full"
+        className="flex items-center gap-2 px-2 py-1 transition-colors rounded-full cursor-pointer"
       >
         <div className="flex items-center mr-1 gap-2">
           <span className="hidden sm:inline-block text-xs font-bold text-gray-400">
