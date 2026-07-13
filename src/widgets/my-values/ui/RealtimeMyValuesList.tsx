@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AuctionDetailModal } from "./AuctionDetailModal"; // 💡 만들어둔 모달 import!
 import { createClientSideClient } from "@/shared/db/client";
-import { AuctionItem } from "../types/acution-items.types";
+import { AuctionItem } from "@/entities/auction/types/acution-items.types";
+import { AuctionDetailModal } from "@/features/auction/ui/AuctionDetailModal";
 
 interface Props {
   initialItems: AuctionItem[];
@@ -129,7 +129,7 @@ export function RealtimeMyValuesList({ initialItems, userId }: Props) {
         })}
       </div>
 
-      {/* 💡 기존에 만든 모달 재사용! */}
+      {/* 기존에 만든 모달 재사용! */}
       <AuctionDetailModal
         key={selectedItem?.id || "empty"}
         item={selectedItem}
