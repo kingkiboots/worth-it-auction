@@ -22,9 +22,14 @@ gsap.registerPlugin(Flip, useGSAP);
 interface Props {
   initialItems: AuctionItem[];
   userId: string | undefined;
+  isAuctionClosed: boolean;
 }
 
-export function RealtimeAuctionList({ initialItems, userId }: Props) {
+export function RealtimeAuctionList({
+  initialItems,
+  userId,
+  isAuctionClosed,
+}: Props) {
   const router = useRouter();
 
   // 서버에서 받아온 초기 데이터를 기본값으로 세팅
@@ -155,9 +160,10 @@ export function RealtimeAuctionList({ initialItems, userId }: Props) {
         })}
       </div>
       <AuctionDetailModal
-        key={selectedItem?.id}
         item={selectedItem}
         isOpen={!!selectedItem}
+        isAuctionClosed={isAuctionClosed}
+        userId={userId}
         onClose={() => setSelectedItem(null)}
       />
     </>
