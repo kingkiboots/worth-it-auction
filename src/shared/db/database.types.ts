@@ -91,6 +91,24 @@ export type Database = {
           },
         ]
       }
+      global_settings: {
+        Row: {
+          description: string | null
+          id: string
+          value: string
+        }
+        Insert: {
+          description?: string | null
+          id: string
+          value: string
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          value?: string
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           created_at: string
