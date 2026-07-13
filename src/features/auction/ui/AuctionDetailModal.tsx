@@ -1,13 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Database } from "@/shared/db/database.types";
 import { createClientSideClient } from "@/shared/db/client";
-
-type AuctionItem = Pick<
-  Database["public"]["Tables"]["auction_items"]["Row"],
-  "id" | "title" | "current_price" | "winner_id" | "rank_color" | "description"
->;
+import { AuctionItem } from "../types/acution-items.types";
 
 interface Props {
   item: AuctionItem | null;
