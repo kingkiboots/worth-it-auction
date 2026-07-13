@@ -5,7 +5,15 @@ import { ROUTES } from "@/shared/config/routes";
 import { createServerSideClient } from "@/shared/db/server";
 
 export async function updateNicknameAction(formData: FormData) {
-  const nickname = formData.get("nickname") as string;
+  const rawNickname = formData.get("nickname");
+  const nickname =
+    typeof rawNickname === "string" ? rawNickname.trim() : "";
+
+  // 🔒 클라이언트의 minLength는 우회 가능하므로 서버에서도 반드시 재검증합니다.
+  if (nickname.length < 2 || nickname.length > 20) {
+    throw new Error("닉네임은 2~20자로 입력해 주세요.");
+  }
+
   const supabase = await createServerSideClient();
 
   const {

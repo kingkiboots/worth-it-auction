@@ -8,7 +8,13 @@ export async function GET(request: Request) {
 
   const code = searchParams.get(ROUTES.PARAMS.CODE); // OAuth 기본 스펙 키값
   // 로그인이 끝나고 돌아갈 목적지 (기본값은 메인 랭킹보드)
-  const next = searchParams.get(ROUTES.PARAMS.NEXT) ?? ROUTES.HOME;
+  // 🔒 Open Redirect 방지: "/"로 시작하고 "//"로 시작하지 않는 내부 상대 경로만 허용합니다.
+  // (절대 URL이나 "//evil.com", ".evil.com" 같은 프로토콜/호스트 조작을 차단)
+  const rawNext = searchParams.get(ROUTES.PARAMS.NEXT);
+  const next =
+    rawNext && rawNext.startsWith("/") && !rawNext.startsWith("//")
+      ? rawNext
+      : ROUTES.HOME;
 
   if (code) {
     const supabase = await createServerSideClient();
