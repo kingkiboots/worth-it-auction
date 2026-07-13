@@ -6,6 +6,7 @@ import {
   resetAuction,
 } from "@/features/admin/api/actions";
 import { createServerSideClient } from "@/shared/db/server";
+import { AdminSubmitButton } from "@/features/admin/ui/AdminSubmitButton";
 
 export default async function AdminPage() {
   const supabase = await createServerSideClient();
@@ -78,29 +79,31 @@ export default async function AdminPage() {
         </div>
         <div className="p-8 flex flex-col gap-4">
           <form action={startAuction}>
-            <button
-              type="submit"
-              className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white text-lg font-black rounded-2xl shadow-md transition-transform active:scale-95 cursor-pointer"
-            >
-              ▶️ 경매 시작하기 (오픈)
-            </button>
+            <AdminSubmitButton
+              text="▶️ 경매 시작하기 (오픈)"
+              loadingText="시작 시간 설정 중..."
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            />
           </form>
+
           <form action={endAuction}>
-            <button
-              type="submit"
-              className="w-full py-4 bg-red-500 hover:bg-red-600 text-white text-lg font-black rounded-2xl shadow-md transition-transform active:scale-95 cursor-pointer"
-            >
-              ⏹️ 경매 즉시 종료 (마감)
-            </button>
+            <AdminSubmitButton
+              text="⏹️ 경매 즉시 종료 (마감)"
+              loadingText="마감 처리 중..."
+              className="bg-red-500 hover:bg-red-600 text-white"
+            />
           </form>
+
           <div className="h-px bg-gray-100 my-4"></div>
+
           <form action={resetAuction}>
-            <button
-              type="submit"
-              className="w-full py-3 bg-white border-2 border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-bold rounded-2xl transition-colors cursor-pointer"
-            >
-              🔄 대기 상태로 초기화 (리셋)
-            </button>
+            <AdminSubmitButton
+              text="🔄 대기 상태로 초기화 (리셋)"
+              loadingText="초기화 진행 중..."
+              // 하얀 버튼이라 텍스트와 스피너를 어두운 색으로 지정
+              className="bg-white border-2 border-gray-200 text-gray-600 hover:bg-gray-50 py-3 text-sm"
+              spinnerColor="text-gray-500"
+            />
           </form>
         </div>
       </div>
