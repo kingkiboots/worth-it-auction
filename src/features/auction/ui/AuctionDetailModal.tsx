@@ -87,7 +87,12 @@ export function AuctionDetailModal({
           {isAuctionClosed ? (
             <AuctionClosedMessage isWinner={isWinner} onClose={onClose} />
           ) : (
-            <AuctionBidForm key={item.id} item={item} onClose={onClose} />
+            <AuctionBidForm
+              key={item.id}
+              item={item}
+              userId={userId}
+              onClose={onClose}
+            />
           )}
 
           {/* 공통 푸터 (현재가) */}

@@ -2,16 +2,21 @@
 "use client";
 
 import { AuctionItem } from "@/entities/auction/types/acution-items.types";
+import { ROUTES } from "@/shared/config/routes";
 import { createClientSideClient } from "@/shared/db/client";
 import { ButtonSpinner } from "@/shared/ui/ButtonSpinner";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface Props {
   item: AuctionItem;
+  userId: string | undefined;
   onClose: () => void;
 }
 
-export function AuctionBidForm({ item, onClose }: Props) {
+export function AuctionBidForm({ item, userId, onClose }: Props) {
+  const router = useRouter();
+
   const minBidAmount = item.current_price + 10000;
   const [bidAmount, setBidAmount] = useState<number>(minBidAmount);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,6 +30,20 @@ export function AuctionBidForm({ item, onClose }: Props) {
   };
 
   const handleSubmit = async () => {
+    //NOTE - 로그인 검증
+    if (!userId) {
+      const confirmLogin = window.confirm(
+        "경매에 참여하려면 로그인이 필요합니다.\n로그인 페이지로 이동하시겠습니까?",
+      );
+
+      if (confirmLogin) {
+        onClose(); // 열려있는 입찰 모달 닫기
+        router.push(ROUTES.LOGIN); // 로그인 페이지로 튕겨주기
+      }
+      return; // 더 이상 아래의 입찰 로직(RPC 통신)이 실행되지 않도록 강제 종료
+    }
+
+    //NOTE - 최소 입찰금액 검증
     if (bidAmount < minBidAmount) {
       setErrorMsg(
         `최소 ${minBidAmount.toLocaleString()}원 이상 입찰해야 합니다.`,
