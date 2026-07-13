@@ -1,11 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createClientSideClient } from "@/shared/db/client";
 import { AuctionDetailModal } from "@/features/auction/ui/AuctionDetailModal";
 import { AuctionItem } from "@/entities/auction/types/acution-items.types";
 import { WinningAuctionItemRow } from "@/entities/auction/ui/WinningAuctionItemRow";
 import { DefaultAuctionItemRow } from "@/entities/auction/ui/DefaultAuctionItemRow";
+import {
+  sortAuctionItems,
+  syncSelectedModalItem,
+} from "@/features/auction/lib/auction-utils";
+
+import gsap from "gsap";
+import { Flip } from "gsap/Flip";
+import { useGSAP } from "@gsap/react";
+
+gsap.registerPlugin(Flip, useGSAP);
 
 interface Props {
   initialItems: AuctionItem[];
@@ -13,25 +23,59 @@ interface Props {
 }
 
 export function RealtimeAuctionList({ initialItems, userId }: Props) {
-  // 💡 서버에서 받아온 초기 데이터를 기본값으로 세팅
-  const [items, setItems] = useState<AuctionItem[]>(initialItems);
-  const [selectedItem, setSelectedItem] = useState<AuctionItem | null>(null); // 💡 모달 상태
+  // 서버에서 받아온 초기 데이터를 기본값으로 세팅
+  const [items, setItems] = useState<AuctionItem[]>(
+    sortAuctionItems(initialItems),
+  );
+  const [selectedItem, setSelectedItem] = useState<AuctionItem | null>(null); // 모달 상태
+
+  // GSAP FLIP을 위한 Ref 세팅
+  const containerRef = useRef<HTMLDivElement>(null);
+  const flipState = useRef<ReturnType<typeof Flip.getState> | null>(null);
+
   const supabase = createClientSideClient();
 
+  // React 렌더링 직후에 FLIP 애니메이션 실행!
+  useGSAP(
+    () => {
+      if (flipState.current && containerRef.current) {
+        Flip.from(flipState.current, {
+          duration: 0.6,
+          ease: "power3.inOut",
+          absolute: true, // 요소들이 겹치면서 스무스하게 이동하도록 만듦
+          stagger: 0.05, // 순차적으로 촤라락 움직이는 딜레이 효과
+        });
+        flipState.current = null; // 실행 후 초기화
+      }
+    },
+    { dependencies: [items], scope: containerRef },
+  );
+
   useEffect(() => {
-    // 💡 초기 페칭(fetch) 로직 삭제. 바로 실시간 구독만 연결합니다.
     const channel = supabase
       .channel("realtime_auction_items")
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "auction_items" },
         (payload) => {
-          setItems((currentItems) =>
-            currentItems.map((item) =>
-              item.id === payload.new.id
-                ? { ...item, ...(payload.new as AuctionItem) }
-                : item,
-            ),
+          const updatedData = payload.new as AuctionItem;
+
+          // 화면 갱신 전 현재 엘리먼트 위치 사진 찍기
+          if (containerRef.current) {
+            flipState.current = Flip.getState(".auction-item-row");
+          }
+
+          // 실시간 반영 후 최신 가격순 재정렬 유틸리티 적용
+          setItems((currentItems) => {
+            const nextItems = currentItems.map((item) =>
+              item.id === updatedData.id ? { ...item, ...updatedData } : item,
+            );
+            return sortAuctionItems(nextItems);
+          });
+
+          // 모달창을 열어둔 상태에서도 가격이 멈추지 않고 실시간으로 동기화되도록
+          setSelectedItem((currentSelected) =>
+            syncSelectedModalItem(currentSelected, updatedData),
           );
         },
       )
@@ -53,30 +97,33 @@ export function RealtimeAuctionList({ initialItems, userId }: Props) {
 
   return (
     <>
-      <div className="flex flex-col mt-2 pb-20">
+      <div ref={containerRef} className="flex flex-col mt-2 pb-20">
         {items.map((item, index) => {
           const isMyWinningItem = userId && item.winner_id === userId;
           const handleRowClick = () => setSelectedItem(item);
 
-          // 💡 복잡한 분기 싹 지우고 레고 블록 갈아끼우듯 처리
-          if (isMyWinningItem) {
-            return (
-              <WinningAuctionItemRow
-                key={item.id}
-                item={item}
-                index={index}
-                onClick={handleRowClick}
-              />
-            );
-          }
-
           return (
-            <DefaultAuctionItemRow
+            // FLIP이 추적할 수 있도록 공통 클래스(.auction-item-row)가 부여된 div로 감싸기
+            <div
               key={item.id}
-              item={item}
-              index={index}
-              onClick={handleRowClick}
-            />
+              className="auction-item-row w-full z-10 bg-white"
+            >
+              {isMyWinningItem ? (
+                <WinningAuctionItemRow
+                  key={item.id}
+                  item={item}
+                  index={index}
+                  onClick={handleRowClick}
+                />
+              ) : (
+                <DefaultAuctionItemRow
+                  key={item.id}
+                  item={item}
+                  index={index}
+                  onClick={handleRowClick}
+                />
+              )}
+            </div>
           );
         })}
       </div>
