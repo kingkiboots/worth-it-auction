@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createClientSideClient } from "@/shared/db/client";
 import { AuctionItem } from "@/entities/auction/types/acution-items.types";
 import { AuctionDetailModal } from "@/features/auction/ui/AuctionDetailModal";
+import { applyBidUpdate } from "@/features/auction/lib/auction-utils";
 
 interface Props {
   initialItems: AuctionItem[];
@@ -51,6 +52,25 @@ export function RealtimeMyValuesList({
       supabase.removeChannel(channel);
     };
   }, [supabase]);
+
+  // 🚀 입찰(재입찰) RPC 성공 시 웹소켓 브로드캐스트를 기다리지 않고 즉시 로컬 상태를 갱신
+  const handleBidSuccess = (
+    itemId: number,
+    newPrice: number,
+    winnerId: string,
+  ) => {
+    setItems((currentItems) =>
+      currentItems.map((item) =>
+        item.id === itemId ? applyBidUpdate(item, newPrice, winnerId) : item,
+      ),
+    );
+
+    setSelectedItem((currentSelected) =>
+      currentSelected?.id === itemId
+        ? applyBidUpdate(currentSelected, newPrice, winnerId)
+        : currentSelected,
+    );
+  };
 
   if (items.length === 0) {
     // ... (Empty State 렌더링 기존과 동일)
@@ -142,6 +162,7 @@ export function RealtimeMyValuesList({
         userId={userId}
         isAuctionClosed={isAuctionClosed}
         onClose={() => setSelectedItem(null)}
+        onBidSuccess={handleBidSuccess}
       />
     </>
   );

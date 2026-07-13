@@ -22,6 +22,28 @@ export const sortAuctionItems = (items: AuctionItem[]): AuctionItem[] => {
 };
 
 /**
+ * 낙관적(optimistic) 입찰 반영 함수
+ * * Q. 웹소켓 브로드캐스트를 기다리지 않고 왜 이 함수가 필요할까요?
+ * A. place_bid RPC가 성공 응답을 준 시점에는 이미 DB에 반영이 끝난 상태입니다.
+ * 하지만 Supabase Realtime이 그 변경사항을 브로드캐스트해서 프론트엔드에 도착하기까지는
+ * 별도의 네트워크 왕복(수백ms ~ 1초 이상)이 추가로 걸립니다.
+ * RPC 성공 즉시 이 함수로 로컬 상태를 먼저 갱신하면 사용자는 지연 없이 자신의 입찰 결과를 보고,
+ * 뒤늦게 도착하는 웹소켓 이벤트는 동일한 값으로 한 번 더 겹쳐 쓰여도 무해합니다.
+ * * @param item 갱신할 대상 아이템
+ * @param newPrice RPC로 성공한 새 입찰가
+ * @param winnerId 새로운 최고 입찰자(현재 유저) ID
+ */
+export const applyBidUpdate = (
+  item: AuctionItem,
+  newPrice: number,
+  winnerId: string,
+): AuctionItem => ({
+  ...item,
+  current_price: newPrice,
+  winner_id: winnerId,
+});
+
+/**
  * [상세 모달 상태 실시간 업데이트 함수
  * * Q. 이 처리가 왜 필요할까요?
  * A. 유저가 특정 물품의 상세 모달창을 열어놓고 입찰 금액을 고민하는 사이, 다른 사람이 선수를 쳐서

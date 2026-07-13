@@ -12,9 +12,15 @@ interface Props {
   item: AuctionItem;
   userId: string | undefined;
   onClose: () => void;
+  onBidSuccess: (itemId: number, newPrice: number, winnerId: string) => void;
 }
 
-export function AuctionBidForm({ item, userId, onClose }: Props) {
+export function AuctionBidForm({
+  item,
+  userId,
+  onClose,
+  onBidSuccess,
+}: Props) {
   const router = useRouter();
 
   const minBidAmount = item.current_price + 10000;
@@ -74,6 +80,8 @@ export function AuctionBidForm({ item, userId, onClose }: Props) {
       if (!result.success) {
         setErrorMsg(result.message);
       } else {
+        // 🚀 웹소켓 브로드캐스트를 기다리지 않고, RPC 성공 즉시 로컬 상태를 먼저 갱신합니다.
+        onBidSuccess(item.id, bidAmount, userId);
         onClose();
       }
     } catch (_err) {

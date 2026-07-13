@@ -7,6 +7,7 @@ import { AuctionItem } from "@/entities/auction/types/acution-items.types";
 import { WinningAuctionItemRow } from "@/entities/auction/ui/WinningAuctionItemRow";
 import { DefaultAuctionItemRow } from "@/entities/auction/ui/DefaultAuctionItemRow";
 import {
+  applyBidUpdate,
   sortAuctionItems,
   syncSelectedModalItem,
 } from "@/features/auction/lib/auction-utils";
@@ -117,6 +118,32 @@ export function RealtimeAuctionList({
     };
   }, [supabase]);
 
+  // 🚀 입찰 RPC 성공 시 웹소켓 브로드캐스트를 기다리지 않고 즉시 로컬 상태를 갱신
+  const handleBidSuccess = (
+    itemId: number,
+    newPrice: number,
+    winnerId: string,
+  ) => {
+    // 실시간 갱신과 동일하게 재정렬 전 위치를 찍어 FLIP 애니메이션이 자연스럽게 이어지도록 함
+    if (containerRef.current) {
+      flipState.current = Flip.getState(".auction-item-row");
+    }
+
+    setItems((currentItems) =>
+      sortAuctionItems(
+        currentItems.map((item) =>
+          item.id === itemId ? applyBidUpdate(item, newPrice, winnerId) : item,
+        ),
+      ),
+    );
+
+    setSelectedItem((currentSelected) =>
+      currentSelected?.id === itemId
+        ? applyBidUpdate(currentSelected, newPrice, winnerId)
+        : currentSelected,
+    );
+  };
+
   // 로딩 중일 때 (스켈레톤이나 빈 화면 처리)
   if (items.length === 0) {
     return (
@@ -165,6 +192,7 @@ export function RealtimeAuctionList({
         isAuctionClosed={isAuctionClosed}
         userId={userId}
         onClose={() => setSelectedItem(null)}
+        onBidSuccess={handleBidSuccess}
       />
     </>
   );

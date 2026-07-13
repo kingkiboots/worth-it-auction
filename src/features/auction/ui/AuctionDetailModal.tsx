@@ -11,6 +11,7 @@ interface Props {
   isOpen: boolean;
   isAuctionClosed: boolean;
   onClose: () => void;
+  onBidSuccess: (itemId: number, newPrice: number, winnerId: string) => void;
 }
 
 export function AuctionDetailModal({
@@ -19,6 +20,7 @@ export function AuctionDetailModal({
   isAuctionClosed,
   userId,
   onClose,
+  onBidSuccess,
 }: Props) {
   // ESC 키를 누르면 모달 닫기
   useEffect(() => {
@@ -92,6 +94,7 @@ export function AuctionDetailModal({
               item={item}
               userId={userId}
               onClose={onClose}
+              onBidSuccess={onBidSuccess}
             />
           )}
 
