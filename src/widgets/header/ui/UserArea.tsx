@@ -14,17 +14,19 @@ export async function UserArea() {
   if (user) {
     const { data } = await supabase
       .from("users")
-      .select("nickname, profile_image")
+      .select("nickname,profile_image,credit")
       .eq("id", user.id)
       .single();
     userProfile = data;
   }
 
-  if (userProfile) {
+  if (userProfile && user) {
     return (
       <UserMenu
-        nickname={userProfile.nickname || "예배자"}
+        userId={user.id}
+        initialNickname={userProfile.nickname ?? "예배자"}
         profileImage={userProfile.profile_image}
+        initialCredit={userProfile.credit}
       />
     );
   }
