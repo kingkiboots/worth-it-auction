@@ -30,7 +30,9 @@ export default async function AdminPage() {
   }
 
   // 기존 설정 데이터 페칭 및 JSX 렌더링 로직 동일...
-  const { data: settings } = await supabase.from("global_settings").select("*");
+  const { data: settings } = await supabase
+    .from("global_settings")
+    .select("id, value");
   const startTimeStr = settings?.find(
     (s) => s.id === "auction_start_time",
   )?.value;

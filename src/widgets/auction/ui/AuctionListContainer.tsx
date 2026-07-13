@@ -18,7 +18,7 @@ export async function AuctionListContainer() {
   // 전역 설정에서 경매 종료 시간 가져오기
   const { data: settings } = await supabase
     .from("global_settings")
-    .select("*")
+    .select("id, value")
     .in("id", ["auction_end_time"]);
 
   const endTimeStr = settings?.find((s) => s.id === "auction_end_time")?.value;

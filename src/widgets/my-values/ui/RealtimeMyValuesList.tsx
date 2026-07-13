@@ -8,9 +8,14 @@ import { AuctionDetailModal } from "@/features/auction/ui/AuctionDetailModal";
 interface Props {
   initialItems: AuctionItem[];
   userId: string;
+  isAuctionClosed: boolean;
 }
 
-export function RealtimeMyValuesList({ initialItems, userId }: Props) {
+export function RealtimeMyValuesList({
+  initialItems,
+  userId,
+  isAuctionClosed,
+}: Props) {
   const [items, setItems] = useState<AuctionItem[]>(initialItems);
   // 모달에 띄울 아이템 상태 추가
   const [selectedItem, setSelectedItem] = useState<AuctionItem | null>(null);
@@ -134,6 +139,8 @@ export function RealtimeMyValuesList({ initialItems, userId }: Props) {
         key={selectedItem?.id || "empty"}
         item={selectedItem}
         isOpen={!!selectedItem}
+        userId={userId}
+        isAuctionClosed={isAuctionClosed}
         onClose={() => setSelectedItem(null)}
       />
     </>
