@@ -12,7 +12,7 @@ export function Header() {
         <div className="flex items-center flex-1">
           <Link
             href={ROUTES.AUCTION}
-            className="text-lg font-bold text-gray-900 tracking-tight"
+            className="text-md sm:text-lg font-bold text-gray-900 tracking-tight"
           >
             삶으로 쓰는 예배{" "}
             <span className="font-light text-gray-500">전(展)</span>
