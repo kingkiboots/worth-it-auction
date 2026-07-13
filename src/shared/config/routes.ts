@@ -4,6 +4,7 @@ export const ROUTES = {
   LOGIN: "/login",
   SETUP_PROFILE: "/setup-profile",
   AUCTION: "/auction",
+  MY_VALUES: "/my-values",
 
   // 2. API 및 콜백 경로
   API: {

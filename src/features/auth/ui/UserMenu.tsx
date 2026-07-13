@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClientSideClient } from "@/shared/db/client";
+import { ROUTES } from "@/shared/config/routes";
 
 interface UserMenuProps {
   userId: string;
@@ -118,7 +119,7 @@ export function UserMenu({
             닉네임 변경
           </Link>
           <Link
-            href="/my-values"
+            href={ROUTES.MY_VALUES}
             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
             onClick={() => setIsOpen(false)}
           >
