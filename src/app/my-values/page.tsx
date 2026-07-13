@@ -1,11 +1,10 @@
-// src/app/my-values/page.tsx
 import { Header } from "@/widgets/header/ui/Header";
 import { redirect } from "next/navigation";
 import { ROUTES } from "@/shared/config/routes";
 import { createServerSideClient } from "@/shared/db/server";
 import { Suspense } from "react";
-import { MyValuesListSkeleton } from "@/features/auction/ui/MyValuesListSkeleton";
-import { MyValuesListContainer } from "@/features/auction/ui/MyValuesListContainer";
+import { MyValuesListSkeleton } from "@/widgets/my-values/ui/MyValuesListSkeleton";
+import { MyValuesListContainer } from "@/widgets/my-values/ui/MyValuesListContainer";
 
 export default async function MyValuesPage() {
   const supabase = await createServerSideClient();

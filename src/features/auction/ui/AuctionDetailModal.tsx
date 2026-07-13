@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClientSideClient } from "@/shared/db/client";
-import { AuctionItem } from "../types/acution-items.types";
+import { AuctionItem } from "@/entities/auction/types/acution-items.types";
 
 interface Props {
   item: AuctionItem | null;
