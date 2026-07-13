@@ -37,7 +37,7 @@ export default function AuctionRankingPage() {
         </div>
 
         {/* 탭 메뉴 영역 */}
-        <div className="px-6 flex gap-4 border-b border-gray-200 pb-2 overflow-x-auto no-scrollbar">
+        {/* <div className="px-6 flex gap-4 border-b border-gray-200 pb-2 overflow-x-auto no-scrollbar">
           <button className="px-4 py-1 text-sm font-bold text-white bg-[#5D4037] rounded-md shrink-0">
             전체
           </button>
@@ -49,7 +49,7 @@ export default function AuctionRankingPage() {
               {tab}
             </button>
           ))}
-        </div>
+        </div> */}
 
         {/* 랭킹 리스트 영역 */}
 
