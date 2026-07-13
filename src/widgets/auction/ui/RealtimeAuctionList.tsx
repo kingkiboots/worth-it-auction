@@ -3,13 +3,16 @@
 import { useEffect, useState } from "react";
 import { createClientSideClient } from "@/shared/db/client";
 import { AuctionDetailModal } from "@/features/auction/ui/AuctionDetailModal";
-import { AuctionItem } from "@/features/auction/types/acution-items.types";
+import { AuctionItem } from "@/entities/auction/types/acution-items.types";
+import { WinningAuctionItemRow } from "@/entities/auction/ui/WinningAuctionItemRow";
+import { DefaultAuctionItemRow } from "@/entities/auction/ui/DefaultAuctionItemRow";
 
 interface Props {
   initialItems: AuctionItem[];
+  userId: string | undefined;
 }
 
-export function RealtimeAuctionList({ initialItems }: Props) {
+export function RealtimeAuctionList({ initialItems, userId }: Props) {
   // 💡 서버에서 받아온 초기 데이터를 기본값으로 세팅
   const [items, setItems] = useState<AuctionItem[]>(initialItems);
   const [selectedItem, setSelectedItem] = useState<AuctionItem | null>(null); // 💡 모달 상태
@@ -51,55 +54,31 @@ export function RealtimeAuctionList({ initialItems }: Props) {
   return (
     <>
       <div className="flex flex-col mt-2 pb-20">
-        {items.map((item, index) => (
-          <div
-            key={item.id}
-            onClick={() => setSelectedItem(item)}
-            className={`flex items-center justify-between px-6 py-4 cursor-pointer hover:bg-white transition-colors border-b border-gray-100 ${index % 2 === 1 ? "bg-gray-50/50" : ""}`}
-          >
-            <div className="flex items-center flex-1 gap-4">
-              <span
-                className={`flex items-center justify-center w-8 h-8 font-bold rounded-lg shrink-0 ${item.rank_color}`}
-              >
-                {index + 1}
-              </span>
-              <h2 className="text-sm md:text-base font-bold text-gray-800 break-keep line-clamp-2 pr-4">
-                {item.title}
-              </h2>
-              <svg
-                className="w-4 h-4 text-gray-300 shrink-0 ml-auto"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </div>
+        {items.map((item, index) => {
+          const isMyWinningItem = userId && item.winner_id === userId;
+          const handleRowClick = () => setSelectedItem(item);
 
-            <div className="flex items-center gap-3 shrink-0 ml-6 w-28 justify-end">
-              <div
-                className={`flex items-center justify-center w-5 h-5 rounded-full border-2 ${(item.current_price || 0) > 0 ? "border-orange-400" : "border-gray-200"}`}
-              >
-                <div
-                  className={`w-2 h-2 rounded-full ${(item.current_price || 0) > 0 ? "bg-orange-400" : "bg-transparent"}`}
-                ></div>
-              </div>
+          // 💡 복잡한 분기 싹 지우고 레고 블록 갈아끼우듯 처리
+          if (isMyWinningItem) {
+            return (
+              <WinningAuctionItemRow
+                key={item.id}
+                item={item}
+                index={index}
+                onClick={handleRowClick}
+              />
+            );
+          }
 
-              <span
-                className={`text-sm md:text-base font-extrabold transition-colors duration-300 ${(item.current_price || 0) > 0 ? "text-gray-900" : "text-gray-400"}`}
-              >
-                {item.current_price === 0
-                  ? "0만 원"
-                  : `${(item.current_price || 0) / 10000}만 원`}
-              </span>
-            </div>
-          </div>
-        ))}
+          return (
+            <DefaultAuctionItemRow
+              key={item.id}
+              item={item}
+              index={index}
+              onClick={handleRowClick}
+            />
+          );
+        })}
       </div>
       <AuctionDetailModal
         key={selectedItem?.id}
