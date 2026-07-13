@@ -36,4 +36,47 @@ body {
     -ms-overflow-style: none; /* IE, Edge 대응 */
     scrollbar-width: none; /* Firefox 대응 */
   }
+
+  /* 모달 배경(딤드) 페이드인 */
+  @keyframes overlay-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  .animate-overlay-in {
+    animation: overlay-in 200ms ease-out;
+  }
+
+  /* 모달 본문: 모바일은 아래에서 슬라이드업, sm 이상은 확대(zoom)+페이드 */
+  @keyframes modal-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(2.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes modal-in-zoom {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  .animate-modal-in {
+    animation: modal-in-up 200ms ease-out;
+  }
+  @media (min-width: 640px) {
+    .animate-modal-in {
+      animation: modal-in-zoom 200ms ease-out;
+    }
+  }
 }
