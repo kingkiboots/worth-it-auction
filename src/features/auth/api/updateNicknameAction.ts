@@ -13,7 +13,7 @@ export async function updateNicknameAction(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) throw new Error("로그인이 필요합니다.");
 
-  // 💡 닉네임 업데이트와 동시에 온보딩 완료(true) 처리
+  // 닉네임 업데이트와 동시에 온보딩 완료(true) 처리
   const { error } = await supabase
     .from("users")
     .update({

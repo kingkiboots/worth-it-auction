@@ -18,9 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      {/* 💡 배경을 밝은 회색으로 고정하고, 텍스트는 짙은 색으로 */}
+      {/* 배경을 밝은 회색으로 고정하고, 텍스트는 짙은 색으로 */}
       <body className={`${inter.className} text-gray-900 antialiased`}>
-        {/* 💡 max-w-md (모바일 고정) 삭제! 화면 전체(w-full)를 쓰도록 변경 */}
+        {/* max-w-md (모바일 고정) 삭제! 화면 전체(w-full)를 쓰도록 변경 */}
         <main className="relative flex flex-col w-full min-h-screen">
           {children}
         </main>

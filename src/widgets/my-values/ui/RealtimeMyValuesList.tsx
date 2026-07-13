@@ -12,7 +12,7 @@ interface Props {
 
 export function RealtimeMyValuesList({ initialItems, userId }: Props) {
   const [items, setItems] = useState<AuctionItem[]>(initialItems);
-  // 💡 모달에 띄울 아이템 상태 추가
+  // 모달에 띄울 아이템 상태 추가
   const [selectedItem, setSelectedItem] = useState<AuctionItem | null>(null);
   const supabase = createClientSideClient();
 
@@ -31,7 +31,7 @@ export function RealtimeMyValuesList({ initialItems, userId }: Props) {
             ),
           );
 
-          // 💡 만약 모달이 열려있는 상태에서 누군가 또 입찰했다면?
+          // 만약 모달이 열려있는 상태에서 누군가 또 입찰했다면?
           // 모달 안의 가격도 실시간으로 바뀌게 selectedItem을 업데이트해 줍니다!
           setSelectedItem((currentSelected) =>
             currentSelected?.id === payload.new.id
@@ -113,7 +113,7 @@ export function RealtimeMyValuesList({ initialItems, userId }: Props) {
                 </p>
               </div>
 
-              {/* 💡 Link 대신 button으로 변경하여 모달 띄우기! */}
+              {/* Link 대신 button으로 변경하여 모달 띄우기! */}
               {isLost && (
                 <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/10 backdrop-blur-[2px] opacity-0 hover:opacity-100 transition-opacity duration-300">
                   <button

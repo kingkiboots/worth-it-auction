@@ -19,8 +19,8 @@ export function UserMenu({
   initialCredit,
 }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [credit, setCredit] = useState<number>(initialCredit); // 💡 크레딧을 상태로 관리
-  const [nickname, setNickname] = useState<string>(initialNickname); // 💡 닉네임도 상태로 관리
+  const [credit, setCredit] = useState<number>(initialCredit); // 크레딧을 상태로 관리
+  const [nickname, setNickname] = useState<string>(initialNickname); // 닉네임도 상태로 관리
 
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -126,7 +126,7 @@ export function UserMenu({
           </Link>
           <div className="h-px my-2 bg-gray-100"></div>
 
-          {/* 💡 button의 onClick 이벤트로 변경 */}
+          {/* button의 onClick 이벤트로 변경 */}
           <button
             onClick={handleLogout}
             className="w-full px-4 py-2 text-sm text-left text-red-600 hover:bg-red-50"

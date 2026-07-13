@@ -52,7 +52,7 @@ export function AuctionDetailModal({ item, isOpen, onClose }: Props) {
     setErrorMsg("");
 
     try {
-      // 💡 Supabase RPC 함수 호출 실행!
+      // Supabase RPC 함수 호출 실행!
       const { data, error } = await supabase.rpc("place_bid", {
         p_item_id: item.id,
         p_bid_amount: bidAmount,
@@ -80,12 +80,12 @@ export function AuctionDetailModal({ item, isOpen, onClose }: Props) {
   };
 
   return (
-    // 💡 배경 클릭 시 onClose 발동 (Backdrop)
+    // 배경 클릭 시 onClose 발동 (Backdrop)
     <div
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm sm:px-4"
       onClick={onClose}
     >
-      {/* 💡 e.stopPropagation()으로 모달 내부 클릭 시 닫히는 것 방지 */}
+      {/* e.stopPropagation()으로 모달 내부 클릭 시 닫히는 것 방지 */}
       <div
         className="w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-10 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
@@ -162,7 +162,7 @@ export function AuctionDetailModal({ item, isOpen, onClose }: Props) {
             </div>
           </div>
 
-          {/* 💡 모바일 친화적인 빠른 금액 추가 버튼 */}
+          {/* 모바일 친화적인 빠른 금액 추가 버튼 */}
           <div className="flex gap-2 mb-6">
             <button
               onClick={() => handleQuickAdd(10000)}

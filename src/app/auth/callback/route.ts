@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     const { error, data } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error && data.user) {
-      // 💡 닉네임 대신 is_setup_completed 상태를 조회합니다.
+      // 닉네임 대신 is_setup_completed 상태를 조회합니다.
       const { data: userProfile } = await supabase
         .from("users")
         .select("is_setup_completed")
