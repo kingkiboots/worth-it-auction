@@ -10,10 +10,12 @@ import {
   sortAuctionItems,
   syncSelectedModalItem,
 } from "@/features/auction/lib/auction-utils";
+import { NetworkStatusToast } from "@/shared/ui/NetworkStatusToast";
 
 import gsap from "gsap";
 import { Flip } from "gsap/Flip";
 import { useGSAP } from "@gsap/react";
+import { useRouter } from "next/navigation";
 
 gsap.registerPlugin(Flip, useGSAP);
 
@@ -23,11 +25,15 @@ interface Props {
 }
 
 export function RealtimeAuctionList({ initialItems, userId }: Props) {
+  const router = useRouter();
+
   // 서버에서 받아온 초기 데이터를 기본값으로 세팅
   const [items, setItems] = useState<AuctionItem[]>(
     sortAuctionItems(initialItems),
   );
   const [selectedItem, setSelectedItem] = useState<AuctionItem | null>(null); // 모달 상태
+
+  const [isOffline, setIsOffline] = useState(false);
 
   // GSAP FLIP을 위한 Ref 세팅
   const containerRef = useRef<HTMLDivElement>(null);
@@ -79,7 +85,27 @@ export function RealtimeAuctionList({ initialItems, userId }: Props) {
           );
         },
       )
-      .subscribe();
+      // subscribe()에 콜백을 넣어서 연결 상태를 모니터링
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          // 재연결(Re-connect) 성공 시!
+          setIsOffline((prevIsOffline) => {
+            if (prevIsOffline) {
+              // 오프라인이었다가 다시 연결된 경우, 놓친 데이터를 가져오기 위해 서버 컴포넌트 강제 리프레시
+              router.refresh();
+              console.log("🔄 네트워크 재연결됨: 누락된 최신 DB 동기화 완료");
+            }
+            return false;
+          });
+        } else if (
+          status === "TIMED_OUT" ||
+          status === "CLOSED" ||
+          status === "CHANNEL_ERROR"
+        ) {
+          // 커넥션이 끊어지면 토스트를 띄웁니다.
+          setIsOffline(true);
+        }
+      });
 
     return () => {
       supabase.removeChannel(channel);
@@ -97,6 +123,7 @@ export function RealtimeAuctionList({ initialItems, userId }: Props) {
 
   return (
     <>
+      <NetworkStatusToast isOffline={isOffline} />
       <div ref={containerRef} className="flex flex-col mt-2 pb-20">
         {items.map((item, index) => {
           const isMyWinningItem = userId && item.winner_id === userId;
