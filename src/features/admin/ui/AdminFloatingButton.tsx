@@ -1,14 +1,13 @@
 import { createServerSideClient } from "@/shared/db/server";
+import { getCurrentUser } from "@/shared/db/dal";
 import { AdminFloatingButtonUI } from "./AdminFloatingButtonUI"; // 💡 추가
 
 export async function AdminFloatingButton() {
-  const supabase = await createServerSideClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   if (!user) return null;
 
+  const supabase = await createServerSideClient();
   const { data: profile } = await supabase
     .from("users")
     .select("role")

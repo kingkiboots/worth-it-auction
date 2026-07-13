@@ -2,16 +2,15 @@ import { UserMenu } from "@/features/auth/ui/UserMenu";
 import Link from "next/link";
 import { ROUTES } from "@/shared/config/routes";
 import { createServerSideClient } from "@/shared/db/server";
+import { getCurrentUser } from "@/shared/db/dal";
 import { createUrlWithParams } from "@/shared/utils/api-utils";
 
 export async function UserArea() {
-  const supabase = await createServerSideClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   let userProfile = null;
   if (user) {
+    const supabase = await createServerSideClient();
     const { data } = await supabase
       .from("users")
       .select("nickname,profile_image,credit")

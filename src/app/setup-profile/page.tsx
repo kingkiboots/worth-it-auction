@@ -1,17 +1,17 @@
 import { redirect } from "next/navigation";
 import { ROUTES } from "@/shared/config/routes";
 import { createServerSideClient } from "@/shared/db/server";
+import { getCurrentUser } from "@/shared/db/dal";
 import { updateNicknameAction } from "@/features/auth/api/updateNicknameAction";
 import { generateRandomNickname } from "@/features/auth/lib/nickname-generator";
 
 export default async function SetupProfilePage() {
   // 1. 서버에서 현재 로그인한 유저 정보 확인
-  const supabase = await createServerSideClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   if (!user) redirect(ROUTES.LOGIN);
+
+  const supabase = await createServerSideClient();
 
   // 2. 트리거가 넣어준 기본 닉네임 가져오기
   const { data: userProfile } = await supabase

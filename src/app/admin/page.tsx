@@ -6,17 +6,17 @@ import {
   resetAuction,
 } from "@/features/admin/api/actions";
 import { createServerSideClient } from "@/shared/db/server";
+import { getCurrentUser } from "@/shared/db/dal";
 import { AdminSubmitButton } from "@/features/admin/ui/AdminSubmitButton";
 
 export default async function AdminPage() {
-  const supabase = await createServerSideClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   if (!user) {
     redirect(ROUTES.AUCTION);
   }
+
+  const supabase = await createServerSideClient();
 
   // 💡 [변경]: 이메일 상수가 아닌 DB에서 유저의 role을 조회합니다.
   const { data: profile } = await supabase

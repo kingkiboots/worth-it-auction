@@ -1,16 +1,13 @@
 import { Header } from "@/widgets/header/ui/Header";
 import { redirect } from "next/navigation";
 import { ROUTES } from "@/shared/config/routes";
-import { createServerSideClient } from "@/shared/db/server";
+import { getCurrentUser } from "@/shared/db/dal";
 import { Suspense } from "react";
 import { MyValuesListSkeleton } from "@/widgets/my-values/ui/MyValuesListSkeleton";
 import { MyValuesListContainer } from "@/widgets/my-values/ui/MyValuesListContainer";
 
 export default async function MyValuesPage() {
-  const supabase = await createServerSideClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   if (!user) {
     redirect(ROUTES.LOGIN);
