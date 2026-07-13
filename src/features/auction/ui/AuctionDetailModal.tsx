@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Database } from "@/shared/db/database.types";
+import { createClientSideClient } from "@/shared/db/client";
 
 type AuctionItem = Pick<
   Database["public"]["Tables"]["auction_items"]["Row"],
@@ -19,6 +20,8 @@ export function AuctionDetailModal({ item, isOpen, onClose }: Props) {
   const [bidAmount, setBidAmount] = useState<number>(minBidAmount);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
+
+  const supabase = createClientSideClient();
 
   // ESC 키를 누르면 모달 닫기
   useEffect(() => {
@@ -39,7 +42,6 @@ export function AuctionDetailModal({ item, isOpen, onClose }: Props) {
 
   // 입찰 제출 핸들러 (추후 RPC 연동)
   const handleSubmit = async () => {
-    // 1. 프론트엔드 방어 로직 (Validation)
     if (bidAmount < minBidAmount) {
       setErrorMsg(
         `최소 ${minBidAmount.toLocaleString()}원 이상 입찰해야 합니다.`,
@@ -51,21 +53,32 @@ export function AuctionDetailModal({ item, isOpen, onClose }: Props) {
       return;
     }
 
-    // 2. 버튼 연타(중복 입찰) 방지
     setIsSubmitting(true);
     setErrorMsg("");
 
     try {
-      // TODO: 여기에 Phase 2의 핵심인 Supabase 입찰 RPC 서버 액션이 들어갑니다!
-      console.log("서버로 전송할 입찰가:", bidAmount);
+      // 💡 Supabase RPC 함수 호출 실행!
+      const { data, error } = await supabase.rpc("place_bid", {
+        p_item_id: item.id,
+        p_bid_amount: bidAmount,
+      });
 
-      // 임시 로딩 시뮬레이션 (1초 대기)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (error) {
+        setErrorMsg(error.message);
+        return;
+      }
 
-      // 입찰 성공 시 모달 닫기
-      onClose();
-    } catch (error) {
-      setErrorMsg("입찰 처리 중 문제가 발생했습니다. 다시 시도해 주세요.");
+      // DB function에서 리턴한 객체 파싱
+      const result = data as { success: boolean; message: string };
+
+      if (!result.success) {
+        setErrorMsg(result.message);
+      } else {
+        // 성공 시 팝업 닫기
+        onClose();
+      }
+    } catch (_err) {
+      setErrorMsg("입찰 처리 중 서버 오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);
     }
