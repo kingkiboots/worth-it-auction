@@ -27,8 +27,9 @@ export async function MyValuesListContainer({ userId }: Props) {
       )
     : [];
 
+  console.log("participatedItemIds", participatedItemIds);
   // 3. 만약 참여한 기록이 없다면 빈 배열 반환
-  if (participatedItemIds.length === 0) {
+  if (!participatedItemIds || participatedItemIds.length === 0) {
     <EmptyState
       icon="🏷️"
       title="아직 참여한 경매가 없습니다"
