@@ -91,6 +91,45 @@ export type Database = {
           },
         ]
       }
+      bids: {
+        Row: {
+          bid_amount: number
+          created_at: string | null
+          id: string
+          item_id: number | null
+          user_id: string | null
+        }
+        Insert: {
+          bid_amount: number
+          created_at?: string | null
+          id?: string
+          item_id?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          bid_amount?: number
+          created_at?: string | null
+          id?: string
+          item_id?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bids_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "auction_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bids_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       global_settings: {
         Row: {
           description: string | null

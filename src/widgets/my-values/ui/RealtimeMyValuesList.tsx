@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { createClientSideClient } from "@/shared/db/client";
 import { AuctionItem } from "@/entities/auction/types/acution-items.types";
-import { AuctionDetailModal } from "@/features/auction/ui/AuctionDetailModal";
 import { applyBidUpdate } from "@/features/auction/lib/auction-utils";
+import { AuctionDetailModal } from "@/features/auction/ui/AuctionDetailModal";
+import { createClientSideClient } from "@/shared/db/client";
+import { useEffect, useState } from "react";
 
 interface Props {
   initialItems: AuctionItem[];
@@ -71,10 +71,6 @@ export function RealtimeMyValuesList({
         : currentSelected,
     );
   };
-
-  if (items.length === 0) {
-    // ... (Empty State 렌더링 기존과 동일)
-  }
 
   return (
     <>
