@@ -7,7 +7,7 @@ import {
 } from "@/features/admin/api/actions";
 import { createServerSideClient } from "@/shared/db/server";
 import { getCurrentUser } from "@/shared/db/dal";
-import { AdminSubmitButton } from "@/features/admin/ui/AdminSubmitButton";
+import { SubmitButton } from "@/shared/ui/SubmitButton";
 
 export default async function AdminPage() {
   const user = await getCurrentUser();
@@ -79,7 +79,7 @@ export default async function AdminPage() {
         </div>
         <div className="p-8 flex flex-col gap-4">
           <form action={startAuction}>
-            <AdminSubmitButton
+            <SubmitButton
               text="▶️ 경매 시작하기 (오픈)"
               loadingText="시작 시간 설정 중..."
               className="bg-blue-600 hover:bg-blue-700 text-white"
@@ -87,7 +87,7 @@ export default async function AdminPage() {
           </form>
 
           <form action={endAuction}>
-            <AdminSubmitButton
+            <SubmitButton
               text="⏹️ 경매 즉시 종료 (마감)"
               loadingText="마감 처리 중..."
               className="bg-red-500 hover:bg-red-600 text-white"
@@ -97,7 +97,7 @@ export default async function AdminPage() {
           <div className="h-px bg-gray-100 my-4"></div>
 
           <form action={resetAuction}>
-            <AdminSubmitButton
+            <SubmitButton
               text="🔄 대기 상태로 초기화 (리셋)"
               loadingText="초기화 진행 중..."
               // 하얀 버튼이라 텍스트와 스피너를 어두운 색으로 지정

@@ -4,7 +4,7 @@
 import { AuctionItem } from "@/entities/auction/types/acution-items.types";
 import { ROUTES } from "@/shared/config/routes";
 import { createClientSideClient } from "@/shared/db/client";
-import { ButtonSpinner } from "@/shared/ui/ButtonSpinner";
+import { Button } from "@/shared/ui/Button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -148,20 +148,14 @@ export function AuctionBidForm({
       </div>
 
       {/* 최종 입찰 버튼 */}
-      <button
+      <Button
         onClick={handleSubmit}
-        disabled={isSubmitting}
-        className="relative w-full py-4 text-lg font-bold text-white bg-[#171717] rounded-2xl hover:bg-gray-800 active:scale-95 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed overflow-hidden cursor-pointer"
+        isSubmitting={isSubmitting}
+        loadingText="입찰 진행 중..."
+        className="relative w-full py-4 text-lg font-bold text-white bg-[#171717] rounded-2xl hover:bg-gray-800 active:scale-95 transition-all disabled:bg-gray-400 overflow-hidden"
       >
-        {isSubmitting ? (
-          <span className="flex items-center justify-center gap-2">
-            <ButtonSpinner className="w-5 h-5 text-white" />
-            입찰 진행 중...
-          </span>
-        ) : (
-          `${bidAmount.toLocaleString()}원 입찰하기`
-        )}
-      </button>
+        {`${bidAmount.toLocaleString()}원 입찰하기`}
+      </Button>
     </>
   );
 }

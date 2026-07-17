@@ -4,6 +4,7 @@ import { createServerSideClient } from "@/shared/db/server";
 import { getCurrentUser } from "@/shared/db/dal";
 import { updateNicknameAction } from "@/features/auth/api/updateNicknameAction";
 import { generateRandomNickname } from "@/features/auth/lib/nickname-generator";
+import { SubmitButton } from "@/shared/ui/SubmitButton";
 
 export default async function SetupProfilePage() {
   // 1. 서버에서 현재 로그인한 유저 정보 확인
@@ -43,12 +44,11 @@ export default async function SetupProfilePage() {
             minLength={2}
             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
           />
-          <button
-            type="submit"
-            className="w-full py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
-          >
-            이 이름으로 경매장 입장하기
-          </button>
+          <SubmitButton
+            text="이 이름으로 경매장 입장하기"
+            loadingText="저장하는 중..."
+            className="bg-blue-600 hover:bg-blue-700 text-white semi-bold"
+          />
         </form>
       </div>
     </div>

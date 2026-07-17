@@ -1,9 +1,8 @@
-// src/features/auth/ui/KakaoLoginButton.tsx (경로는 프로젝트에 맞게!)
 "use client";
 
 import { useState } from "react";
 import { createClientSideClient } from "@/shared/db/client";
-import { ButtonSpinner } from "@/shared/ui/ButtonSpinner";
+import { Button } from "@/shared/ui/Button";
 import { createUrlWithParams } from "@/shared/utils/api-utils";
 import { ROUTES } from "@/shared/config/routes";
 
@@ -34,20 +33,14 @@ export function KakaoLoginButton() {
   };
 
   return (
-    <button
+    <Button
       onClick={handleLogin}
-      disabled={isLoading}
-      className="relative flex items-center justify-center w-full py-4 text-lg font-black text-black bg-[#FEE500] rounded-2xl hover:bg-[#FADA0A] active:scale-95 transition-all disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+      isSubmitting={isLoading}
+      loadingText="카카오톡으로 이동 중..."
+      spinnerColor="text-black" // 카카오 노란 배경에 맞게 스피너 색상을 어둡게 처리
+      className="relative flex items-center justify-center w-full py-4 text-lg font-black text-black bg-[#FEE500] rounded-2xl hover:bg-[#FADA0A] active:scale-95 transition-all disabled:opacity-70"
     >
-      {isLoading ? (
-        <span className="flex items-center gap-2">
-          {/* 카카오 노란 배경에 맞게 스피너 색상을 어둡게(text-black/30, text-black) 처리 */}
-          <ButtonSpinner className="w-5 h-5 text-black" />
-          카카오톡으로 이동 중...
-        </span>
-      ) : (
-        "카카오로 1초 만에 시작하기"
-      )}
-    </button>
+      카카오로 1초 만에 시작하기
+    </Button>
   );
 }
