@@ -40,6 +40,7 @@ export function RealtimeAuctionList({
   const [selectedItem, setSelectedItem] = useState<AuctionItem | null>(null); // 모달 상태
 
   const [isOffline, setIsOffline] = useState(false);
+  const isOfflineRef = useRef(false);
 
   // GSAP FLIP을 위한 Ref 세팅
   const containerRef = useRef<HTMLDivElement>(null);
@@ -95,20 +96,19 @@ export function RealtimeAuctionList({
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
           // 재연결(Re-connect) 성공 시!
-          setIsOffline((prevIsOffline) => {
-            if (prevIsOffline) {
-              // 오프라인이었다가 다시 연결된 경우, 놓친 데이터를 가져오기 위해 서버 컴포넌트 강제 리프레시
-              router.refresh();
-              console.log("🔄 네트워크 재연결됨: 누락된 최신 DB 동기화 완료");
-            }
-            return false;
-          });
+          if (isOfflineRef.current) {
+            // 오프라인이었다가 다시 연결된 경우, 놓친 데이터를 가져오기 위해 서버 컴포넌트 강제 리프레시
+            router.refresh();
+          }
+          isOfflineRef.current = false;
+          setIsOffline(false);
         } else if (
           status === "TIMED_OUT" ||
           status === "CLOSED" ||
           status === "CHANNEL_ERROR"
         ) {
           // 커넥션이 끊어지면 토스트를 띄웁니다.
+          isOfflineRef.current = true;
           setIsOffline(true);
         }
       });
