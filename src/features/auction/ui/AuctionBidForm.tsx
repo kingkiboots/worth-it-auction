@@ -1,4 +1,3 @@
-// src/features/auction/ui/AuctionBidForm.tsx
 "use client";
 
 import { AuctionItem } from "@/entities/auction/types/acution-items.types";
@@ -15,12 +14,7 @@ interface Props {
   onBidSuccess: (itemId: number, newPrice: number, winnerId: string) => void;
 }
 
-export function AuctionBidForm({
-  item,
-  userId,
-  onClose,
-  onBidSuccess,
-}: Props) {
+export function AuctionBidForm({ item, userId, onClose, onBidSuccess }: Props) {
   const router = useRouter();
 
   const minBidAmount = item.current_price + 10000;
