@@ -13,7 +13,7 @@ const ONBOARDING_SLIDES = [
   {
     id: "slide-2",
     nextId: "slide-3",
-    image: "/images/onboarding-2.png",
+    image: "/images/onboarding-2.gif",
     title: "실시간으로 진행되는 입찰",
     description:
       "마음에 드는 물품에 입찰하세요.\n치열한 눈치싸움과 함께 현장의 열기를 느낄 수 있습니다.",
@@ -70,16 +70,26 @@ export default function LandingPage() {
             </div>
 
             {/* 💡 중앙 컨텐츠 영역 */}
-            <div className="flex-1 flex flex-col items-center justify-center px-8 w-full max-w-sm mx-auto pb-4">
-              <div className="w-full aspect-square bg-gray-100 rounded-3xl mb-8 flex items-center justify-center overflow-hidden shadow-sm">
-                <span className="text-5xl text-gray-300">📸</span>
+            <div className="flex-1 flex flex-col items-center justify-center px-6 w-full max-w-sm mx-auto pb-2 min-h-0">
+              {/* 
+                ✨ 사이즈업 포인트 ✨
+                1. max-h-[58vh] -> max-h-[65vh] 로 변경 (화면 세로 길이의 65%까지 꽉 채워서 커짐!)
+                2. mb-6 -> mb-4 로 이미지 아래 여백을 살짝 줄여 공간 확보
+              */}
+              <div className="flex-1 w-full min-h-0 flex items-center justify-center mb-4">
+                <img
+                  src={slide.image}
+                  alt={slide.title}
+                  className="w-auto h-full max-h-[65vh] object-contain rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.12)] border border-gray-100"
+                />
               </div>
 
-              <div className="text-center w-full">
-                <h1 className="text-2xl font-black text-gray-900 mb-4 break-keep">
+              {/* 텍스트 영역 (이미지가 커진 만큼 텍스트 간격도 아주 살짝 타이트하게 조절) */}
+              <div className="text-center w-full shrink-0">
+                <h1 className="text-2xl font-black text-gray-900 mb-2 break-keep">
                   {slide.title}
                 </h1>
-                <p className="text-base text-gray-500 font-medium leading-relaxed whitespace-pre-wrap break-keep">
+                <p className="text-[15px] text-gray-500 font-medium leading-relaxed whitespace-pre-wrap break-keep">
                   {slide.description}
                 </p>
               </div>
