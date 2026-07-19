@@ -5,7 +5,7 @@ import { ROUTES } from "@/shared/config/routes";
 import { createClientSideClient } from "@/shared/db/client";
 import { Button } from "@/shared/ui/Button";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 interface Props {
   item: AuctionItem;
@@ -22,11 +22,33 @@ export function AuctionBidForm({ item, userId, onClose, onBidSuccess }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
 
+  // 💡 흔들림 애니메이션을 제어할 상태 추가
+  const [isShaking, setIsShaking] = useState(false);
+  // 연속 클릭 시 타이머 충돌을 방지하기 위한 Ref
+  const shakeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const supabase = createClientSideClient();
+
+  /**
+   * 에러 메시지 세팅과 동시에 흔들림 애니메이션을 트리거하는 헬퍼 함수
+   * @param msg
+   */
+  const triggerError = (msg: string) => {
+    setErrorMsg(msg);
+    setIsShaking(true);
+
+    // 이전 타이머가 있다면 클리어 (연속 클릭 방지)
+    if (shakeTimeoutRef.current) clearTimeout(shakeTimeoutRef.current);
+
+    // 0.4초 뒤에 흔들림 상태 해제
+    shakeTimeoutRef.current = setTimeout(() => {
+      setIsShaking(false);
+    }, 400);
+  };
 
   const handleQuickAdd = (amount: number) => {
     setBidAmount((prev) => prev + amount);
-    setErrorMsg("");
+    setErrorMsg(""); // 값 변경 시 에러 초기화 (붉은 테두리 해제)
   };
 
   const handleSubmit = async () => {
@@ -65,21 +87,21 @@ export function AuctionBidForm({ item, userId, onClose, onBidSuccess }: Props) {
       });
 
       if (error) {
-        setErrorMsg(error.message);
+        triggerError(error.message);
         return;
       }
 
       const result = data as { success: boolean; message: string };
 
       if (!result.success) {
-        setErrorMsg(result.message);
+        triggerError(result.message);
       } else {
         // 🚀 웹소켓 브로드캐스트를 기다리지 않고, RPC 성공 즉시 로컬 상태를 먼저 갱신합니다.
         onBidSuccess(item.id, bidAmount, userId);
         onClose();
       }
     } catch (_err) {
-      setErrorMsg("입찰 처리 중 서버 오류가 발생했습니다.");
+      triggerError("입찰 처리 중 서버 오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);
     }
@@ -87,6 +109,18 @@ export function AuctionBidForm({ item, userId, onClose, onBidSuccess }: Props) {
 
   return (
     <>
+      {/* 💡 흔들림(Shake) 효과를 위한 인라인 CSS 정의 */}
+      <style>{`
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          20%, 60% { transform: translateX(-4px); }
+          40%, 80% { transform: translateX(4px); }
+        }
+        .animate-shake {
+          animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+      `}</style>
+
       {/* 금액 입력 영역  */}
       <div className="mb-2">
         <label className="block text-xs font-bold text-gray-500 mb-2">
@@ -95,15 +129,23 @@ export function AuctionBidForm({ item, userId, onClose, onBidSuccess }: Props) {
         <div className="relative">
           <input
             type="number"
-            value={bidAmount || ""}
+            value={bidAmount ?? ""}
             onChange={(e) => {
               setBidAmount(Number(e.target.value));
-              setErrorMsg("");
+              setErrorMsg(""); // 타이핑 시 즉각적으로 에러 상태(붉은 테두리) 해제
             }}
             disabled={isSubmitting}
-            className="w-full p-4 text-2xl font-black text-gray-900 bg-white border-2 border-gray-200 rounded-2xl focus:border-black focus:ring-0 outline-none transition-all disabled:bg-gray-50 disabled:text-gray-400"
+            className={`w-full p-4 text-2xl font-black text-gray-900 bg-white border-2 rounded-2xl focus:ring-0 outline-none transition-all disabled:bg-gray-50 disabled:text-gray-400 ${
+              errorMsg
+                ? "border-red-500 focus:border-red-500 text-red-500" // 💡 에러 시: 테두리와 포커스 색상을 에러 텍스트와 동일한 붉은색(red-500)으로
+                : "border-gray-200 focus:border-black" // 평상시: 회색 테두리, 검은색 포커스
+            } ${isShaking ? "animate-shake" : ""}`} // 💡 흔들림 상태일 때 클래스 부착
           />
-          <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 font-bold">
+          <span
+            className={`absolute right-5 top-1/2 -translate-y-1/2 font-bold transition-colors ${
+              errorMsg ? "text-red-500" : "text-gray-400"
+            }`}
+          >
             원
           </span>
         </div>
