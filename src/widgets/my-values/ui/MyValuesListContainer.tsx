@@ -29,18 +29,20 @@ export async function MyValuesListContainer({ userId }: Props) {
 
   // 3. 만약 참여한 기록이 없다면 빈 배열 반환
   if (!participatedItemIds || participatedItemIds.length === 0) {
-    <EmptyState
-      icon="🏷️"
-      title="아직 참여한 경매가 없습니다"
-      description={
-        <>
-          마음에 드는 가치를 발견하고
-          <br />첫 번째 입찰의 주인공이 되어보세요.
-        </>
-      }
-      actionHref={ROUTES.AUCTION}
-      actionText="경매장으로 이동하기"
-    />;
+    return (
+      <EmptyState
+        icon="🏷️"
+        title="아직 참여한 경매가 없습니다"
+        description={
+          <>
+            마음에 드는 가치를 발견하고
+            <br />첫 번째 입찰의 주인공이 되어보세요.
+          </>
+        }
+        actionHref={ROUTES.AUCTION}
+        actionText="경매장으로 이동하기"
+      />
+    );
   }
 
   // 4. 내가 참여했던 물품들의 최신 정보 가져오기 (.in() 필터 사용)

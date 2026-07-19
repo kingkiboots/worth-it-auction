@@ -136,10 +136,10 @@ export function RealtimeMyValuesList({
 
               {/* Link 대신 button으로 변경하여 모달 띄우기! */}
               {isLost && (
-                <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/10 backdrop-blur-[2px] opacity-0 hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[2px]">
                   <button
-                    onClick={() => setSelectedItem(item)} // 클릭 시 모달 On!
-                    className="px-6 py-3 font-black text-white bg-red-500 rounded-xl shadow-lg hover:bg-red-600 hover:scale-105 transition-all transform"
+                    onClick={() => setSelectedItem(item)}
+                    className="px-6 py-3 font-black text-white bg-red-500 rounded-xl shadow-lg hover:bg-red-600 active:scale-95 transition-all"
                   >
                     되찾으러 가기 ⚔️
                   </button>
