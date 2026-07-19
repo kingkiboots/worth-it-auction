@@ -12,11 +12,13 @@
 - **Framework:** Next.js (App Router)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
+- **Animation:** GSAP (실시간 랭킹 변동, 유효성 에러 Shake 애니메이션 등)
 - **Architecture:** FSD (Feature-Sliced Design) 기반의 폴더 구조 설계
 
 **Backend & Database (BaaS)**
 
 - **Database:** Supabase (PostgreSQL)
+- **Auth:** Supabase Auth (Kakao 소셜 로그인)
 - **Realtime:** Supabase Realtime (WebSockets)
 - **API:** Supabase RPC (Remote Procedure Call) for Transaction atomicity
 
@@ -37,6 +39,9 @@
 - **📱 앱 퀄리티의 랜딩 페이지 (Onboarding)**
   - 자바스크립트 상태 관리 없이 순수 CSS(Tailwind)로 구현된 플로팅 디바이스 Mockup UI.
   - 반응형 디자인이 적용되어 어떠한 모바일 기기에서도 핵심 정보가 잘리지 않고 100% 노출됩니다.
+- **🔑 카카오 소셜 로그인 & 프로필 설정**
+  - Supabase Auth 기반의 카카오 OAuth 로그인으로 별도 회원가입 절차 없이 빠르게 입장합니다.
+  - 최초 로그인 시 자동 생성된 닉네임을 확인/수정하는 프로필 설정(Setup Profile) 단계를 거칩니다.
 - **⚡ 실시간 입찰 현황판 (Realtime Dashboard)**
   - WebSocket을 활용한 실시간 랭킹 및 입찰가 변동 확인.
   - 내가 1등일 때, 남에게 1등을 뺏겼을 때(실시간 알림 및 버튼 노출)를 즉각적으로 시각화합니다.
@@ -46,6 +51,25 @@
 - **🛡️ 사용자 친화적 에러 핸들링 (Error Feedback)**
   - 입찰 금액 부족, 1만 원 단위 미충족 등의 에러 발생 시, 0.4초간 입력창이 흔들리는(Shake) 애니메이션과 붉은색 테두리 포커싱으로 유저에게 명확하고 즉각적인 시각적 피드백을 제공합니다.
   - 모바일 환경을 고려한 퀵 버튼(+1만, +5만, +10만) 지원.
+- **📋 나의 입찰 내역 (My Values)**
+  - 내가 참여한 모든 입찰 항목과 현재 상태(진행 중/낙찰/유찰)를 한 번에 모아 확인합니다.
+- **🛠️ 마스터 전용 경매 통제실 (Admin Panel)**
+  - `master` 권한을 가진 계정만 접근 가능한 관리자 페이지에서 경매 시작/즉시 종료/상태 초기화를 제어합니다.
+
+<br/>
+
+## 📂 Project Structure
+
+FSD(Feature-Sliced Design)를 따라 계층별로 폴더를 분리했습니다.
+
+```
+src/
+├── app/        # Next.js App Router 페이지 및 라우트 (/, /login, /setup-profile, /auction, /my-values, /admin, /api/health)
+├── widgets/    # 여러 feature/entity를 조합한 화면 단위 UI (header, auction 목록, my-values 위젯 등)
+├── features/   # 사용자 행동 단위 기능 (입찰하기, 카카오 로그인, 관리자 경매 제어 등)
+├── entities/   # 도메인 모델 및 관련 UI (auction 등)
+└── shared/     # 공통 UI, Supabase 클라이언트(db), 유틸, 타입, 라우트 상수 등
+```
 
 <br/>
 
@@ -53,22 +77,24 @@
 
 ### 1. Prerequisites
 
-이 프로젝트를 실행하기 위해서는 Node.js와 Supabase 프로젝트가 필요합니다.
+이 프로젝트를 실행하기 위해서는 Node.js(LTS)와 pnpm, 그리고 Supabase 프로젝트가 필요합니다.
+
+Supabase 프로젝트에는 다음 스키마가 사전에 구성되어 있어야 합니다 (현재 마이그레이션 SQL은 레포에 포함되어 있지 않으므로, 기존 프로젝트를 공유받거나 동일한 스키마를 직접 구성해야 합니다).
+
+- 테이블: `users`(role 컬럼 포함), `auction_items`, `bids`, `global_settings`
+- RPC 함수: `place_bid` (동시 입찰 Race Condition 방지용)
+- Auth Provider: Kakao OAuth 활성화
 
 ### 2. Installation
 
 ```bash
 # 저장소 클론
-git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
+git clone https://github.com/kingkiboots/worth-it-auction.git
 
 # 프로젝트 폴더로 이동
-cd your-repo-name
+cd worth-it-auction
 
-# 의존성 설치 (사용하시는 패키지 매니저에 맞게 실행하세요)
-npm install
-# or
-yarn install
-# or
+# 의존성 설치 (pnpm 사용을 권장합니다)
 pnpm install
 ```
 
@@ -78,17 +104,21 @@ pnpm install
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
 ```
 
 ### 4. Run Development Server
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
 pnpm dev
 ```
 
 브라우저를 열고 http://localhost:3000에 접속하여 프로젝트를 확인합니다.
+
+### 5. (Optional) Generate Supabase Types
+
+Supabase 스키마가 변경되었다면, 아래 명령어로 `src/shared/db/database.types.ts`를 최신 상태로 갱신할 수 있습니다.
+
+```bash
+pnpm gen:db-types
+```
