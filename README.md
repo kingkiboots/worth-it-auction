@@ -34,6 +34,29 @@
 
 <br/>
 
+## Database Schema
+
+![ERD 이미지](https://github.com/user-attachments/assets/2eabd77b-060a-40eb-bd9e-9c0d5a0695cf)
+
+데이터베이스는 Supabase(PostgreSQL)를 기반으로 설계되었으며, 주요 테이블 간의 관계는 다음과 같습니다.
+
+### Tables Overview
+
+| Table                 | Description                                                                       |
+| :-------------------- | :-------------------------------------------------------------------------------- |
+| **`auction_items`**   | 경매에 올라온 물품들의 정보와 현재 입찰 상태, 낙찰자 정보를 관리합니다.           |
+| **`bids`**            | 유저의 모든 입찰 이력을 기록하며, `auction_items`와 `users`를 연결합니다.         |
+| **`users`**           | 경매 서비스의 사용자 프로필 및 크레딧 정보를 관리하며 Supabase Auth와 연동됩니다. |
+| **`global_settings`** | 경매 종료 시간 등 시스템 전체의 설정값을 관리하는 키-밸류 저장소입니다.           |
+
+### Key Relationships
+
+- **Auction & Bids**: `auction_items`는 여러 개의 `bids`를 가질 수 있습니다 (1:N 관계).
+- **Users & Bids**: `users`는 여러 개의 `bids`를 생성할 수 있습니다 (1:N 관계).
+- **Winner Link**: `auction_items`의 `winner_id`는 `users` 테이블을 참조하여 현재 낙찰자를 식별합니다.
+
+<br/>
+
 ## ✨ Key Features
 
 - **📱 앱 퀄리티의 랜딩 페이지 (Onboarding)**
