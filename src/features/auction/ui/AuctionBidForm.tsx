@@ -5,7 +5,7 @@ import { ROUTES } from "@/shared/config/routes";
 import { createClientSideClient } from "@/shared/db/client";
 import { Button } from "@/shared/ui/Button";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useRef, useState, ChangeEventHandler } from "react";
 
 interface Props {
   item: AuctionItem;
@@ -50,6 +50,15 @@ export function AuctionBidForm({ item, userId, onClose, onBidSuccess }: Props) {
     setBidAmount((prev) => prev + amount);
     setErrorMsg(""); // 값 변경 시 에러 초기화 (붉은 테두리 해제)
   };
+
+  const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const bidAmoundNumber = Number(e.target.value)
+    if(bidAmoundNumber > 0 && e.target.value.startsWith("0")) {
+      e.target.value = `${bidAmoundNumber}`;
+    }
+    setBidAmount(bidAmoundNumber);
+    setErrorMsg(""); // 타이핑 시 즉각적으로 에러 상태(붉은 테두리) 해제
+  }
 
   const handleSubmit = async () => {
     //NOTE - 로그인 검증
@@ -129,11 +138,9 @@ export function AuctionBidForm({ item, userId, onClose, onBidSuccess }: Props) {
         <div className="relative">
           <input
             type="number"
-            value={bidAmount ?? ""}
-            onChange={(e) => {
-              setBidAmount(Number(e.target.value));
-              setErrorMsg(""); // 타이핑 시 즉각적으로 에러 상태(붉은 테두리) 해제
-            }}
+            value={Number(bidAmount ?? "")}
+            onChange={handleChange}
+            min={0}
             disabled={isSubmitting}
             className={`w-full p-4 text-2xl font-black text-gray-900 bg-white border-2 rounded-2xl focus:ring-0 outline-none transition-all disabled:bg-gray-50 disabled:text-gray-400 ${
               errorMsg
