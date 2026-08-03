@@ -5,7 +5,7 @@ const ONBOARDING_SLIDES = [
   {
     id: "slide-1",
     nextId: "slide-2",
-    image: "/images/onboarding-1.png",
+    image: "/images/onboarding-1.webp",
     title: "삶으로 쓰는 예배전",
     description:
       "우리가 남긴 가치들이 새로운 주인을 만납니다.\n현장에서 진행되는 특별한 경매에 참여해보세요.",
@@ -21,7 +21,7 @@ const ONBOARDING_SLIDES = [
   {
     id: "slide-3",
     nextId: null,
-    image: "/images/onboarding-3.png",
+    image: "/images/onboarding-3.webp",
     title: "황금빛 낙찰의 순간",
     description:
       "시간이 종료되는 순간, 가장 높은 가치를\n인정한 분에게 물품이 최종 낙찰됩니다.",
