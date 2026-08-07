@@ -7,7 +7,7 @@ import { AdminFloatingButton } from "@/features/admin/ui/AdminFloatingButton";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "상황 경매장- 삶으로 쓰는 예배전(展)",
+  title: "상황 경매장 - 삶으로 쓰는 예배전(展)",
   description: "당신의 가치를 증명할 치열한 눈치 싸움",
 };
 
