@@ -52,13 +52,13 @@ export function AuctionBidForm({ item, userId, onClose, onBidSuccess }: Props) {
   };
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    const bidAmoundNumber = Number(e.target.value)
-    if(bidAmoundNumber > 0 && e.target.value.startsWith("0")) {
+    const bidAmoundNumber = Number(e.target.value);
+    if (bidAmoundNumber > 0 && e.target.value.startsWith("0")) {
       e.target.value = `${bidAmoundNumber}`;
     }
     setBidAmount(bidAmoundNumber);
     setErrorMsg(""); // 타이핑 시 즉각적으로 에러 상태(붉은 테두리) 해제
-  }
+  };
 
   const handleSubmit = async () => {
     //NOTE - 로그인 검증
@@ -76,13 +76,13 @@ export function AuctionBidForm({ item, userId, onClose, onBidSuccess }: Props) {
 
     //NOTE - 최소 입찰금액 검증
     if (bidAmount < minBidAmount) {
-      setErrorMsg(
+      triggerError(
         `최소 ${minBidAmount.toLocaleString()}원 이상 입찰해야 합니다.`,
       );
       return;
     }
     if (bidAmount % 10000 !== 0) {
-      setErrorMsg("입찰 금액은 1만 원 단위로 입력해 주세요.");
+      triggerError("입찰 금액은 1만 원 단위로 입력해 주세요.");
       return;
     }
 
