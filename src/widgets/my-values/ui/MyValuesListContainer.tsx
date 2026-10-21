@@ -69,7 +69,8 @@ export async function MyValuesListContainer({ userId }: Props) {
     <RealtimeMyValuesList
       initialItems={items}
       userId={userId}
-      isAuctionClosed={isClosed}
+      initialAuctionEndTime={endTimeStr ?? null}
+      initialIsAuctionClosed={isClosed}
     />
   );
 }

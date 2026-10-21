@@ -39,7 +39,8 @@ export async function AuctionListContainer() {
       initialItems={items}
       initialWinnerProfiles={winnerProfiles}
       userId={user?.id}
-      isAuctionClosed={isClosed}
+      initialAuctionEndTime={endTimeStr ?? null}
+      initialIsAuctionClosed={isClosed}
     />
   );
 }

@@ -2,6 +2,7 @@
 
 import { AuctionItem } from "@/entities/auction/types/acution-items.types";
 import { applyBidUpdate } from "@/features/auction/lib/auction-utils";
+import { useAuctionClosed } from "@/features/auction/lib/useAuctionClosed";
 import { AuctionDetailModal } from "@/features/auction/ui/AuctionDetailModal";
 import { createClientSideClient } from "@/shared/db/client";
 import { useRouter } from "next/navigation";
@@ -10,14 +11,21 @@ import { useEffect, useRef, useState } from "react";
 interface Props {
   initialItems: AuctionItem[];
   userId: string;
-  isAuctionClosed: boolean;
+  initialAuctionEndTime: string | null;
+  initialIsAuctionClosed: boolean;
 }
 
 export function RealtimeMyValuesList({
   initialItems,
   userId,
-  isAuctionClosed,
+  initialAuctionEndTime,
+  initialIsAuctionClosed,
 }: Props) {
+  // 마감되는 순간 새로고침 없이 바로 낙찰/유찰 카드와 마감 안내로 바뀌도록 합니다.
+  const isAuctionClosed = useAuctionClosed(
+    initialAuctionEndTime,
+    initialIsAuctionClosed,
+  );
   const [items, setItems] = useState<AuctionItem[]>(initialItems);
   // 모달에 띄울 아이템 상태
   const [selectedItem, setSelectedItem] = useState<AuctionItem | null>(null);

@@ -15,6 +15,7 @@ import {
   syncSelectedModalItem,
 } from "@/features/auction/lib/auction-utils";
 import { useWinnerProfiles } from "@/features/auction/lib/useWinnerProfiles";
+import { useAuctionClosed } from "@/features/auction/lib/useAuctionClosed";
 import { NetworkStatusToast } from "@/shared/ui/NetworkStatusToast";
 
 import gsap from "gsap";
@@ -28,16 +29,24 @@ interface Props {
   initialItems: AuctionItem[];
   initialWinnerProfiles: WinnerProfiles;
   userId: string | undefined;
-  isAuctionClosed: boolean;
+  initialAuctionEndTime: string | null;
+  initialIsAuctionClosed: boolean;
 }
 
 export function RealtimeAuctionList({
   initialItems,
   initialWinnerProfiles,
   userId,
-  isAuctionClosed,
+  initialAuctionEndTime,
+  initialIsAuctionClosed,
 }: Props) {
   const router = useRouter();
+
+  // 마감 시각이 지나거나 관리자가 즉시 종료하면 새로고침 없이 바로 입찰 폼을 닫습니다.
+  const isAuctionClosed = useAuctionClosed(
+    initialAuctionEndTime,
+    initialIsAuctionClosed,
+  );
 
   // 서버에서 받아온 초기 데이터를 기본값으로 세팅
   const [items, setItems] = useState<AuctionItem[]>(
