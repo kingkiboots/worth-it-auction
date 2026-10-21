@@ -1,8 +1,9 @@
+import { AdminFloatingButton } from "@/features/admin/ui/AdminFloatingButton";
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
 import { Suspense } from "react";
-import { AdminFloatingButton } from "@/features/admin/ui/AdminFloatingButton";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,6 +33,7 @@ export default function RootLayout({
         {/* max-w-md (모바일 고정) 삭제! 화면 전체(w-full)를 쓰도록 변경 */}
         <main className="relative flex flex-col w-full min-h-screen">
           {children}
+          <Analytics />
         </main>
         <Suspense fallback={null}>
           <AdminFloatingButton />
