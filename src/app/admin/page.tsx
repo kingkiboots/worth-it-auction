@@ -8,6 +8,7 @@ import {
 import { createServerSideClient } from "@/shared/db/server";
 import { getCurrentUser } from "@/shared/db/dal";
 import { SubmitButton } from "@/shared/ui/SubmitButton";
+import { ResetAuctionResultsForm } from "@/features/admin/ui/ResetAuctionResultsForm";
 
 export default async function AdminPage() {
   const user = await getCurrentUser();
@@ -45,6 +46,7 @@ export default async function AdminPage() {
 
   let currentStatus = "알 수 없음";
   let statusColor = "text-gray-500 bg-gray-100";
+  let isAuctionEnded = false;
 
   if (now < startTime) {
     currentStatus = "대기 중 (시작 전)";
@@ -55,6 +57,7 @@ export default async function AdminPage() {
   } else if (now > endTime) {
     currentStatus = "경매 종료됨";
     statusColor = "text-gray-700 bg-gray-200 border-gray-300";
+    isAuctionEnded = true;
   }
 
   return (
@@ -95,6 +98,9 @@ export default async function AdminPage() {
           </form>
 
           <div className="h-px bg-gray-100 my-4"></div>
+
+          {/* 경매가 종료된 뒤에만 결과(낙찰자·낙찰가·크레딧·입찰 이력) 초기화를 노출합니다. */}
+          {isAuctionEnded && <ResetAuctionResultsForm />}
 
           <form action={resetAuction}>
             <SubmitButton

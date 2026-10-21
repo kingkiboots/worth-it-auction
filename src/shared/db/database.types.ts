@@ -148,6 +148,10 @@ export type Database = {
         Args: { p_bid_amount: number; p_item_id: number }
         Returns: Json
       }
+      reset_auction_results: {
+        Args: never
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never
