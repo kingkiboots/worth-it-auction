@@ -1,5 +1,6 @@
 import { AdminFloatingButton } from "@/features/admin/ui/AdminFloatingButton";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Suspense } from "react";
@@ -38,6 +39,7 @@ export default function RootLayout({
           <AdminFloatingButton />
         </Suspense>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
