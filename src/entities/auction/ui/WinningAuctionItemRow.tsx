@@ -1,18 +1,27 @@
 "use client";
 
-import { AuctionItem } from "../types/acution-items.types";
+import { AuctionItem, WinnerProfile } from "../types/acution-items.types";
+import { WinnerAvatar } from "./WinnerAvatar";
 
 interface Props {
   item: AuctionItem;
   index: number;
+  winnerProfile: WinnerProfile | null;
+  isAuctionClosed: boolean;
   onClick: () => void;
 }
 
-export function WinningAuctionItemRow({ item, index, onClick }: Props) {
+export function WinningAuctionItemRow({
+  item,
+  index,
+  winnerProfile,
+  isAuctionClosed,
+  onClick,
+}: Props) {
   return (
     <div
       onClick={onClick}
-      className="flex items-center justify-between px-6 py-4 cursor-pointer bg-orange-100/60 hover:bg-orange-100 border-b border-gray-100 transition-colors"
+      className="flex items-center justify-between px-6 lg:px-4 py-4 cursor-pointer bg-orange-100/60 hover:bg-orange-100 border-b border-gray-100 transition-colors"
     >
       <div className="flex items-center flex-1 gap-4">
         <span
@@ -54,6 +63,15 @@ export function WinningAuctionItemRow({ item, index, onClick }: Props) {
             ? "0만 원"
             : `${item.current_price / 10000}만 원`}
         </span>
+      </div>
+
+      {/* 💡 다른 행과 열이 어긋나지 않도록 내 낙찰 행에도 같은 자리에 (내) 프사를 표시 */}
+      <div className="hidden lg:block shrink-0 ml-6">
+        <WinnerAvatar
+          hasWinner={!!item.winner_id}
+          profile={winnerProfile}
+          isAuctionClosed={isAuctionClosed}
+        />
       </div>
     </div>
   );

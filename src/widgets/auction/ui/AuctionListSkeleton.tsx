@@ -5,7 +5,7 @@ export function AuctionListSkeleton() {
       {[...Array(10)].map((_, i) => (
         <div
           key={i}
-          className={`flex items-center justify-between px-6 py-4 border-b border-gray-100 ${i % 2 === 1 ? "bg-gray-50/50" : "bg-white"}`}
+          className={`flex items-center justify-between px-6 lg:px-4 py-4 border-b border-gray-100 ${i % 2 === 1 ? "bg-gray-50/50" : "bg-white"}`}
         >
           <div className="flex items-center flex-1 gap-4">
             {/* 순위 박스 스켈레톤 */}
@@ -20,6 +20,9 @@ export function AuctionListSkeleton() {
             {/* 가격 텍스트 스켈레톤 */}
             <div className="h-5 bg-gray-200 rounded-md w-16"></div>
           </div>
+
+          {/* 낙찰자 프사 스켈레톤 (1024px 이상) */}
+          <div className="hidden lg:block w-8 h-8 ml-6 bg-gray-200 rounded-full shrink-0"></div>
         </div>
       ))}
     </div>

@@ -3,7 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { createClientSideClient } from "@/shared/db/client";
 import { AuctionDetailModal } from "@/features/auction/ui/AuctionDetailModal";
-import { AuctionItem } from "@/entities/auction/types/acution-items.types";
+import {
+  AuctionItem,
+  WinnerProfiles,
+} from "@/entities/auction/types/acution-items.types";
 import { WinningAuctionItemRow } from "@/entities/auction/ui/WinningAuctionItemRow";
 import { DefaultAuctionItemRow } from "@/entities/auction/ui/DefaultAuctionItemRow";
 import {
@@ -11,6 +14,7 @@ import {
   sortAuctionItems,
   syncSelectedModalItem,
 } from "@/features/auction/lib/auction-utils";
+import { useWinnerProfiles } from "@/features/auction/lib/useWinnerProfiles";
 import { NetworkStatusToast } from "@/shared/ui/NetworkStatusToast";
 
 import gsap from "gsap";
@@ -22,12 +26,14 @@ gsap.registerPlugin(Flip, useGSAP);
 
 interface Props {
   initialItems: AuctionItem[];
+  initialWinnerProfiles: WinnerProfiles;
   userId: string | undefined;
   isAuctionClosed: boolean;
 }
 
 export function RealtimeAuctionList({
   initialItems,
+  initialWinnerProfiles,
   userId,
   isAuctionClosed,
 }: Props) {
@@ -52,6 +58,9 @@ export function RealtimeAuctionList({
         : null,
     );
   }
+
+  // 낙찰자 프사·닉네임 (1024px 이상에서 행 오른쪽에 표시)
+  const winnerProfiles = useWinnerProfiles(items, initialWinnerProfiles);
 
   const [isOffline, setIsOffline] = useState(false);
   const isOfflineRef = useRef(false);
@@ -174,6 +183,9 @@ export function RealtimeAuctionList({
       <div ref={containerRef} className="flex flex-col mt-2 pb-20">
         {items.map((item, index) => {
           const isMyWinningItem = userId && item.winner_id === userId;
+          const winnerProfile = item.winner_id
+            ? (winnerProfiles[item.winner_id] ?? null)
+            : null;
           const handleRowClick = () => setSelectedItem(item);
 
           return (
@@ -187,6 +199,8 @@ export function RealtimeAuctionList({
                   key={item.id}
                   item={item}
                   index={index}
+                  winnerProfile={winnerProfile}
+                  isAuctionClosed={isAuctionClosed}
                   onClick={handleRowClick}
                 />
               ) : (
@@ -194,6 +208,8 @@ export function RealtimeAuctionList({
                   key={item.id}
                   item={item}
                   index={index}
+                  winnerProfile={winnerProfile}
+                  isAuctionClosed={isAuctionClosed}
                   onClick={handleRowClick}
                 />
               )}

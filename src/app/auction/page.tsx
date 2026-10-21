@@ -9,9 +9,12 @@ export default function AuctionRankingPage() {
     <>
       <Header />
       {/* 전체 배경을 밝은 톤으로 깔고 컨텐츠를 가운데 정렬 */}
-      <div className="mx-auto min-h-screen">
+      {/* 💡 w-full이 없으면 flex-col 안의 mx-auto 때문에 폭이 '가장 긴 제목' 길이에 맞춰 줄어듭니다.
+          헤더와 같은 최대 폭(max-w-5xl)으로 고정하고, 1024px 이상에서는 좌우 여백도 헤더(px-4)와 맞춰
+          랭킹 행 오른쪽 낙찰자 프사가 헤더의 내 프사와 같은 세로줄에 오도록 합니다. */}
+      <div className="w-full max-w-5xl mx-auto min-h-screen">
         {/* 상단 헤더 영역 (이미지의 텍스트와 동전 일러스트) */}
-        <div className="relative px-6 pt-8 pb-4">
+        <div className="relative px-6 lg:px-4 pt-8 pb-4">
           <div className="inline-block px-3 py-1 mb-4 text-sm font-bold text-gray-500 bg-white border border-gray-200 rounded-full shadow-sm">
             <CurrentDate />
           </div>
@@ -26,7 +29,7 @@ export default function AuctionRankingPage() {
           </p>
 
           {/* 우측 동전 스택 일러스트 (Tailwind CSS로 간략히 구현) */}
-          <div className="absolute right-6 top-6 flex flex-col items-center">
+          <div className="absolute right-6 lg:right-4 top-6 flex flex-col items-center">
             <div className="w-16 h-4 bg-orange-300 rounded-full border-b-2 border-orange-400 mb-[-8px] z-10"></div>
             <div className="w-16 h-4 bg-orange-400 rounded-full border-b-2 border-orange-500 mb-[-8px] z-20"></div>
             <div className="w-16 h-4 bg-orange-500 rounded-full border-b-2 border-orange-600 mb-1 z-30"></div>

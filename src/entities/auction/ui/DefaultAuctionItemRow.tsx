@@ -1,18 +1,27 @@
 "use client";
 
-import { AuctionItem } from "../types/acution-items.types";
+import { AuctionItem, WinnerProfile } from "../types/acution-items.types";
+import { WinnerAvatar } from "./WinnerAvatar";
 
 interface Props {
   item: AuctionItem;
   index: number;
+  winnerProfile: WinnerProfile | null;
+  isAuctionClosed: boolean;
   onClick: () => void;
 }
 
-export function DefaultAuctionItemRow({ item, index, onClick }: Props) {
+export function DefaultAuctionItemRow({
+  item,
+  index,
+  winnerProfile,
+  isAuctionClosed,
+  onClick,
+}: Props) {
   return (
     <div
       onClick={onClick}
-      className={`flex items-center justify-between px-6 py-4 cursor-pointer hover:bg-gray-50 border-b border-gray-100 transition-colors ${
+      className={`flex items-center justify-between px-6 lg:px-4 py-4 cursor-pointer hover:bg-gray-50 border-b border-gray-100 transition-colors ${
         index % 2 === 1 ? "bg-gray-50/50" : "bg-white"
       }`}
     >
@@ -55,6 +64,15 @@ export function DefaultAuctionItemRow({ item, index, onClick }: Props) {
             ? "0만 원"
             : `${item.current_price / 10000}만 원`}
         </span>
+      </div>
+
+      {/* 💡 낙찰자 프사는 1024px 이상에서만 표시 (모바일은 행 폭이 좁아 제목 공간을 우선) */}
+      <div className="hidden lg:block shrink-0 ml-6">
+        <WinnerAvatar
+          hasWinner={!!item.winner_id}
+          profile={winnerProfile}
+          isAuctionClosed={isAuctionClosed}
+        />
       </div>
     </div>
   );
