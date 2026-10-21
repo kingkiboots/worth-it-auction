@@ -22,7 +22,7 @@ export function DefaultAuctionItemRow({ item, index, onClick }: Props) {
         >
           {index + 1}
         </span>
-        <h2 className="text-sm md:text-base font-bold text-gray-800 break-keep line-clamp-2 pr-4">
+        <h2 className="text-sm md:text-base font-bold text-gray-800 break-keep line-clamp-2 md:pr-4">
           {item.title}
         </h2>
         <svg

@@ -25,7 +25,7 @@ export function WinningAuctionItemRow({ item, index, onClick }: Props) {
           <span className="text-[10px] font-extrabold text-[#F25C54] mb-0.5 tracking-tight animate-pulse">
             내 입찰 물품 👑
           </span>
-          <h2 className="text-sm md:text-base font-bold text-gray-800 break-keep line-clamp-2 pr-4">
+          <h2 className="text-sm md:text-base font-bold text-gray-800 break-keep line-clamp-2 md:pr-4">
             {item.title}
           </h2>
         </div>
