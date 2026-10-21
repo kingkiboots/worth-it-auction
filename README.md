@@ -78,6 +78,7 @@
   - 내가 참여한 모든 입찰 항목과 현재 상태(진행 중/낙찰/유찰)를 한 번에 모아 확인합니다.
 - **🛠️ 마스터 전용 경매 통제실 (Admin Panel)**
   - `master` 권한을 가진 계정만 접근 가능한 관리자 페이지에서 경매 시작/즉시 종료/상태 초기화를 제어합니다.
+  - 경매 종료 후에는 모든 물품의 낙찰자·낙찰가, 유저 크레딧, 입찰 이력을 한 번에 초기화할 수 있습니다.
 
 <br/>
 
@@ -105,7 +106,7 @@ src/
 Supabase 프로젝트에는 다음 스키마가 사전에 구성되어 있어야 합니다 (현재 마이그레이션 SQL은 레포에 포함되어 있지 않으므로, 기존 프로젝트를 공유받거나 동일한 스키마를 직접 구성해야 합니다).
 
 - 테이블: `users`(role 컬럼 포함), `auction_items`, `bids`, `global_settings`
-- RPC 함수: `place_bid` (동시 입찰 Race Condition 방지용)
+- RPC 함수: `place_bid` (동시 입찰 Race Condition 방지용), `reset_auction_results` (경매 결과 초기화용, `supabase/migrations/20261021144036_reset_auction_results.sql`)
 - Auth Provider: Kakao OAuth 활성화
 
 ### 2. Installation
