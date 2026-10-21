@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useId } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClientSideClient } from "@/shared/db/client";
@@ -27,6 +27,12 @@ export function UserMenu({
   const router = useRouter();
   const supabase = createClientSideClient();
 
+  // 💡 헤더가 페이지(/auction, /my-values)마다 따로 있어서 페이지를 이동하면 한쪽 UserMenu는 구독을 해제하고
+  // 다른 쪽은 구독을 시작합니다. 채널 이름이 같으면 아직 해제 중인 채널을 그대로 받아와 구독이 되지 않으므로
+  // 인스턴스마다 채널 이름을 다르게 둡니다.
+  const channelId = useId();
+  const hasSubscribedRef = useRef(false);
+
   // 외부 클릭 시 메뉴 닫기 및 ESC 닫기
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -41,7 +47,7 @@ export function UserMenu({
   // 내 정보(크레딧, 닉네임) 실시간 구독
   useEffect(() => {
     const channel = supabase
-      .channel(`realtime_user_${userId}`)
+      .channel(`realtime_user_${userId}_${channelId}`)
       .on(
         "postgres_changes",
         {
@@ -57,12 +63,30 @@ export function UserMenu({
             setNickname(payload.new.nickname);
         },
       )
-      .subscribe();
+      .subscribe(async (status) => {
+        // 다른 페이지에 다녀오는 동안(Activity로 숨겨짐)이나 연결이 끊긴 동안 놓친 변경
+        // (예: 관리자의 크레딧 초기화)은 다시 구독될 때 직접 조회해서 맞춥니다.
+        if (status !== "SUBSCRIBED") return;
+        if (!hasSubscribedRef.current) {
+          hasSubscribedRef.current = true;
+          return;
+        }
+
+        const { data } = await supabase
+          .from("users")
+          .select("credit,nickname")
+          .eq("id", userId)
+          .single();
+
+        if (!data) return;
+        setCredit(data.credit);
+        if (data.nickname) setNickname(data.nickname);
+      });
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [supabase, userId]);
+  }, [supabase, userId, channelId]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();

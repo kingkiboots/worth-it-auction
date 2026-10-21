@@ -4,7 +4,8 @@ import { AuctionItem } from "@/entities/auction/types/acution-items.types";
 import { applyBidUpdate } from "@/features/auction/lib/auction-utils";
 import { AuctionDetailModal } from "@/features/auction/ui/AuctionDetailModal";
 import { createClientSideClient } from "@/shared/db/client";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 interface Props {
   initialItems: AuctionItem[];
@@ -20,7 +21,22 @@ export function RealtimeMyValuesList({
   const [items, setItems] = useState<AuctionItem[]>(initialItems);
   // 모달에 띄울 아이템 상태
   const [selectedItem, setSelectedItem] = useState<AuctionItem | null>(null);
+  const router = useRouter();
+  const hasSubscribedRef = useRef(false);
   const supabase = createClientSideClient();
+
+  // 💡 router.refresh()로 서버 데이터(initialItems)가 새로 내려오면 로컬 상태도 다시 맞춥니다.
+  // (페이지를 떠나도 Activity로 숨겨져 상태가 보존되므로, 직접 맞추지 않으면 예전 목록이 남습니다.)
+  const [prevInitialItems, setPrevInitialItems] = useState(initialItems);
+  if (initialItems !== prevInitialItems) {
+    setPrevInitialItems(initialItems);
+    setItems(initialItems);
+    setSelectedItem((currentSelected) =>
+      currentSelected
+        ? (initialItems.find((item) => item.id === currentSelected.id) ?? null)
+        : null,
+    );
+  }
 
   useEffect(() => {
     const channel = supabase
@@ -46,12 +62,18 @@ export function RealtimeMyValuesList({
           );
         },
       )
-      .subscribe();
+      .subscribe((status) => {
+        // 다른 페이지에 다녀오는 동안(Activity로 숨겨짐)이나 연결이 끊긴 동안에는 구독이 없어 변경을 놓치므로,
+        // 다시 구독되면 서버 컴포넌트를 새로 받아옵니다. (예: 결과 초기화로 입찰 이력이 비면 빈 화면으로 바뀜)
+        if (status !== "SUBSCRIBED") return;
+        if (hasSubscribedRef.current) router.refresh();
+        hasSubscribedRef.current = true;
+      });
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [supabase]);
+  }, [supabase, router]);
 
   // 🚀 입찰(재입찰) RPC 성공 시 웹소켓 브로드캐스트를 기다리지 않고 즉시 로컬 상태를 갱신
   const handleBidSuccess = (

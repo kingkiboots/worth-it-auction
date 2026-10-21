@@ -39,6 +39,20 @@ export function RealtimeAuctionList({
   );
   const [selectedItem, setSelectedItem] = useState<AuctionItem | null>(null); // 모달 상태
 
+  // 💡 router.refresh()로 서버 데이터(initialItems)가 새로 내려오면 로컬 상태도 다시 맞춥니다.
+  // useState 초기값은 첫 마운트 때만 쓰이는데, cacheComponents 환경에서는 페이지를 떠나도 언마운트되지 않고
+  // Activity로 숨겨져 상태가 그대로 보존되므로, 직접 맞추지 않으면 다시 돌아왔을 때 예전 목록이 남습니다.
+  const [prevInitialItems, setPrevInitialItems] = useState(initialItems);
+  if (initialItems !== prevInitialItems) {
+    setPrevInitialItems(initialItems);
+    setItems(sortAuctionItems(initialItems));
+    setSelectedItem((currentSelected) =>
+      currentSelected
+        ? (initialItems.find((item) => item.id === currentSelected.id) ?? null)
+        : null,
+    );
+  }
+
   const [isOffline, setIsOffline] = useState(false);
   const isOfflineRef = useRef(false);
 
@@ -97,7 +111,8 @@ export function RealtimeAuctionList({
         if (status === "SUBSCRIBED") {
           // 재연결(Re-connect) 성공 시!
           if (isOfflineRef.current) {
-            // 오프라인이었다가 다시 연결된 경우, 놓친 데이터를 가져오기 위해 서버 컴포넌트 강제 리프레시
+            // 오프라인이었다가 다시 연결됐거나, 다른 페이지에 다녀와 다시 구독된 경우(숨겨질 때 채널이 CLOSED 됨),
+            // 놓친 데이터(예: 관리자의 결과 초기화)를 가져오기 위해 서버 컴포넌트 강제 리프레시
             router.refresh();
           }
           isOfflineRef.current = false;
